@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="EN" lang="EN">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" type="text/css" href="css/cofeeStyle.css" />
+  <title>cofeeShop Register</title>
+  <script type="text/javascript" src="js/register.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <a href="login.xhtml">Back</a><br /><br />
+    <h1>Register Form</h1>
+
+    <form action="../backend/register.php" method="post">
+
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required="required" /><br />
+
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required="required" /><br />
+
+      <label for="password2">Repeat Password:</label>
+      <input type="password" id="password2" name="password2" required="required" /><br />
+
+      <label for="phone">Phone Number:</label>
+      <input type="phone" id="phone" name="phone" required="required" /><br />
+
+      <label for="role">Role:</label>
+      <div class="radios">
+        <label for="manager">
+          <input type="radio" class="normal" id="manager" name="role" value="manager" required="required" />
+          Manager
+        </label>
+
+        <label for="corporate">
+          <input type="radio" class="normal" id="corporate" name="role" value="corporate" required="required" />
+          Corporate
+        </label>
+      </div>
+
+      <label for="branch">Branch:</label>
+      <select id="branch" name="branch" required="required">
+        <option value="">--Select Branch--</option>
+      </select>
+
+      <br />
+      <br />
+      <input type="submit" value="Register" />
+    </form>
+  </div>
+</body>
+
+</html>

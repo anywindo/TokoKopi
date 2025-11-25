@@ -1,0 +1,39 @@
+CREATE TABLE branch (
+    id_branch INT AUTO_INCREMENT PRIMARY KEY,
+    nama VARCHAR(255),
+    alamat TEXT
+);
+
+CREATE TABLE users (
+    id_user INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) UNIQUE,
+    password VARCHAR(255),
+    role ENUM('manager', 'corporate'),
+    telp VARCHAR(50),
+    id_branch INT,
+    FOREIGN KEY (id_branch) REFERENCES branch(id_branch)
+);
+
+CREATE TABLE pemakaian (
+    id_laporan INT AUTO_INCREMENT PRIMARY KEY,
+    id_pelapor INT,
+    id_branch INT,
+    tanggal DATE,
+    arabica FLOAT,
+    robusta FLOAT,
+    liberica FLOAT,
+    decaf FLOAT,
+    susu FLOAT,
+    FOREIGN KEY (id_pelapor) REFERENCES users(id_user),
+    FOREIGN KEY (id_branch) REFERENCES branch(id_branch)
+);
+
+CREATE TABLE omzet (
+    id_laporan INT AUTO_INCREMENT PRIMARY KEY,
+    id_pelapor INT,
+    id_branch INT,
+    tanggal DATE,
+    omzet FLOAT,
+    FOREIGN KEY (id_pelapor) REFERENCES users(id_user),
+    FOREIGN KEY (id_branch) REFERENCES branch(id_branch)
+);
