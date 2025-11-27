@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Profile - Brew.</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Baskervville:ital@0;1&amp;family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&amp;display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="../css/style.css" />
+</head>
+
+<body>
+
+    <div class="global-header">
+        <a href="#" class="global-header-logo">Brew. Profile</a>
+    </div>
+
+    <div class="dashboard-container pt-[60px]">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <a href="#" id="sidebar-title"
+                    class="text-2xl font-bold text-[#d7ccc8] no-underline hover:text-white">Brew.</a>
+            </div>
+            <ul class="sidebar-menu" id="sidebar-menu">
+                <!-- Injected by JS -->
+                <li>
+                    <a href="#"
+                        class="active flex flex-col items-center justify-center text-center py-6 !p-0 !border-none hover:!bg-transparent">
+                        <img src="../assets/coffe-bean.svg" alt="Profile"
+                            class="w-16 h-16 rounded-full border-2 border-[#8c6a48] p-1 bg-[#f0e0c9] shadow-lg" />
+                        <span class="text-xs uppercase tracking-widest mt-2 font-bold text-[#d7ccc8]">Profile</span>
+                    </a>
+                </li>
+                <li><a href="../index.xhtml" class="text-red-400 hover:text-red-200">Logout</a></li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <a href="#" class="footer-btn active">
+                    <span>👤</span> Profile
+                </a>
+                <a href="../index.xhtml" class="footer-btn text-red-300 hover:text-red-100">
+                    <span>🚪</span> Logout
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <h2 class="section-title">My Profile</h2>
+
+            <div class="max-w-md mx-auto mt-8">
+                <div class="paper-card p-8 text-center">
+
+                    <div class="leather-patch mx-auto mb-6">
+                        <img src="../assets/coffe-bean.svg" alt="Profile"
+                            onerror="this.style.display='none'; this.parentElement.innerHTML+='&lt;span style=\'font-size:40px; color:#5d4037\'&gt;👤&lt;/span&gt;'" />
+                    </div>
+
+                    <h3 id="profile-username" class="text-2xl font-bold text-[#4e342e] mb-2">Loading...</h3>
+                    <p id="profile-role" class="text-[#8c6a48] uppercase tracking-widest font-bold text-sm mb-8">...</p>
+
+                    <div class="text-left space-y-4">
+                        <div class="paper-row border-b border-[#eee]">
+                            <span class="font-bold text-[#5d4037] w-24">User ID:</span>
+                            <span id="profile-id" class="text-[#333]">...</span>
+                        </div>
+                        <div class="paper-row border-b border-[#eee]">
+                            <span class="font-bold text-[#5d4037] w-24">Status:</span>
+                            <span class="text-green-600 font-bold">Active</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-8">
+                        <button onclick="alert('Feature coming soon!')" class="btn-skeuo text-sm py-2">Change
+                            Password</button>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        async function loadProfile() {
+            try {
+                const res = await fetch('../api/profile_api.php');
+                const user = await res.json();
+
+                if (user.error) {
+                    window.location.href = '../index.xhtml';
+                    return;
+                }
+
+                // Update Profile UI
+                document.getElementById('profile-username').textContent = user.username;
+                document.getElementById('profile-role').textContent = user.role;
+                document.getElementById('profile-id').textContent = '#' + user.id_user;
+
+                // Update Sidebar based on Role
+                const menu = document.getElementById('sidebar-menu');
+                const title = document.getElementById('sidebar-title');
+
+                let dashboardLink = '#';
+                if (user.role === 'corporate') {
+                    dashboardLink = 'corporate.xhtml';
+                    title.textContent = 'Brew. Corp';
+                } else if (user.role === 'manager') {
+                    dashboardLink = 'manager.xhtml';
+                    title.textContent = 'Brew. Manager';
+                }
+
+                menu.innerHTML = `
+                <li>
+                    <a href="#" class="active flex flex-col items-center justify-center text-center py-6 !p-0 !border-none hover:!bg-transparent">
+                        <img src="../assets/coffe-bean.svg" alt="Profile" class="w-16 h-16 rounded-full border-2 border-[#8c6a48] p-1 bg-[#f0e0c9] shadow-lg" />
+                        <span id="sidebar-username-static" class="font-bold text-[#d7ccc8] mt-4 text-base">Hello, User</span>
+                    </a>
+                </li>
+                <li><a href="${dashboardLink}">Dashboard</a></li>
+                <li class="push-bottom"><a href="../index.xhtml" class="text-red-400 hover:text-red-200">Logout</a></li>
+            `;
+
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadProfile);
+    </script>
+</body>
+
+</html>

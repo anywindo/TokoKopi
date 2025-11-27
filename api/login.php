@@ -25,12 +25,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->close();
 
     if (password_verify($password, $actualPassword)) {
-        if($role === "manager") {
-            header("Location: ../frontend/manager.xhtml");
-        } else if($role === "corporate"){
-            header("Location: ../frontend/corporate.xhtml");
-        }else{
-            echo "error role." + $role;
+        session_start();
+        $_SESSION['username'] = $username;
+        $_SESSION['role'] = $role;
+
+        if ($role === 'corporate') {
+            header("Location: ../views/corporate.xhtml");
+        } else { 
+            header("Location: ../views/manager.xhtml");
         }
         exit();
     } else {

@@ -1,5 +1,5 @@
-window.addEventListener('DOMContentLoaded', function() {
-    fetch('../backend/get_branches.php')
+window.addEventListener('DOMContentLoaded', function () {
+    fetch('../api/get_branches.php')
         .then(response => response.json())
         .then(data => {
             const select = document.getElementById('branch');
