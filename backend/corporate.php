@@ -26,6 +26,10 @@ switch ($action) {
         getStockHistory($conn);
         break;
 
+    case 'get_all_omzet':
+        getAllOmzet($conn);
+        break;
+
     case 'get_branches':
         getBranches($conn);
         break;
@@ -125,6 +129,30 @@ function getRevenueHistory($conn) {
 
     while ($row = $result->fetch_assoc()) {
         $rows[] = $row;
+    }
+
+    echo json_encode($rows);
+}
+
+function getAllOmzet($conn) {
+    $sql = "SELECT 
+                o.id_laporan,
+                o.tanggal,
+                o.omzet,
+                u.username AS pelapor,
+                b.nama AS branch_name
+            FROM omzet o
+            LEFT JOIN users u ON o.id_pelapor = u.id_user
+            LEFT JOIN branch b ON o.id_branch = b.id_branch
+            ORDER BY o.tanggal DESC";
+
+    $result = $conn->query($sql);
+    $rows = [];
+
+    if ($result && $result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $rows[] = $row;
+        }
     }
 
     echo json_encode($rows);
