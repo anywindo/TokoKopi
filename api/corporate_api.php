@@ -4,218 +4,231 @@ session_start();
 
 header('Content-Type: application/json');
 
-// Auth Check
+// AUTH
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'corporate') {
     echo json_encode(['error' => 'Unauthorized']);
     exit();
 }
 
-$action = $_GET['action'] ?? '';
+$action = isset($_GET['action']) ? $_GET['action'] : '';
 
 switch ($action) {
+
     case 'get_dashboard_data':
         getDashboardData($conn);
         break;
+
     case 'get_revenue_history':
         getRevenueHistory($conn);
         break;
+
     case 'get_stock_history':
         getStockHistory($conn);
         break;
+
+    case 'get_all_omzet':
+        getAllOmzet($conn);
+        break;
+
     case 'get_branches':
         getBranches($conn);
         break;
+
     case 'add_branch':
         addBranch($conn);
         break;
-    case 'update_branch':
-        updateBranch($conn);
-        break;
-    case 'update_omzet':
-        updateOmzet($conn);
-        break;
-    case 'update_stock':
-        updateStock($conn);
-        break;
-    case 'delete_branch':
-        deleteBranch($conn);
-        break;
+
     default:
         echo json_encode(['error' => 'Invalid action']);
         break;
 }
 
+
+
+// ==========================
+// DASHBOARD
+// ==========================
 function getDashboardData($conn) {
     $data = [];
 
-    // 1. Total Pemasukan Omset Harian (7 Hari)
-    $sql = "SELECT tanggal, SUM(omzet) as total 
+    // CHART OMZET 7 HARI
+    $sql = "SELECT tanggal, SUM(omzet) AS total 
             FROM omzet 
-            WHERE tanggal >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) 
-            GROUP BY tanggal 
+            WHERE tanggal >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+            GROUP BY tanggal
             ORDER BY tanggal ASC";
     $result = $conn->query($sql);
-    $revenue_chart = [];
-    while($row = $result->fetch_assoc()) {
-        $revenue_chart[] = $row;
-    }
-    $data['revenue_chart'] = $revenue_chart;
 
-    // 2. Sisa Stok Harian (Average per Branch for today/latest)
-    $sql = "SELECT AVG(arabica) as arabica, AVG(robusta) as robusta, AVG(liberica) as liberica, AVG(decaf) as decaf, AVG(susu) as susu 
-            FROM pemakaian 
+    $revenue = [];
+    while ($row = $result->fetch_assoc()) {
+        $revenue[] = $row;
+    }
+    $data['revenue_chart'] = $revenue;
+
+    // RATA-RATA PEMAKAIAN 7 HARI
+    $sql = "SELECT 
+                AVG(arabica) AS arabica,
+                AVG(robusta) AS robusta,
+                AVG(liberica) AS liberica,
+                AVG(decaf) AS decaf,
+                AVG(susu) AS susu
+            FROM pemakaian
             WHERE tanggal >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)";
     $result = $conn->query($sql);
     $data['stock_avg'] = $result->fetch_assoc();
 
-    // 3. Pemasukan Omset Detail per Branch (7 Hari)
-    $sql = "SELECT b.nama, SUM(o.omzet) as total 
-            FROM omzet o 
-            JOIN branch b ON o.id_branch = b.id_branch 
-            WHERE o.tanggal >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) 
+    // TOTAL OMZET PER BRANCH
+    $sql = "SELECT b.nama, SUM(o.omzet) AS total
+            FROM omzet o
+            JOIN branch b ON o.id_branch = b.id_branch
+            WHERE o.tanggal >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
             GROUP BY o.id_branch";
     $result = $conn->query($sql);
-    $branch_revenue = [];
-    while($row = $result->fetch_assoc()) {
-        $branch_revenue[] = $row;
+
+    $branchRev = [];
+    while ($row = $result->fetch_assoc()) {
+        $branchRev[] = $row;
     }
-    $data['branch_revenue'] = $branch_revenue;
+    $data['branch_revenue'] = $branchRev;
 
     echo json_encode($data);
 }
 
-function getRevenueHistory($conn) {
-    $date_filter = $_GET['date'] ?? '';
-    $branch_filter = $_GET['branch'] ?? '';
 
-    $sql = "SELECT o.id_laporan, o.tanggal, o.omzet, u.username as pelapor, b.nama as branch_name 
-            FROM omzet o 
-            LEFT JOIN users u ON o.id_pelapor = u.id_user 
-            LEFT JOIN branch b ON o.id_branch = b.id_branch 
+
+// ==========================
+// DETAIL OMZET
+// ==========================
+function getRevenueHistory($conn) {
+    $date = isset($_GET['date']) ? $_GET['date'] : '';
+    $branch = isset($_GET['branch']) ? $_GET['branch'] : '';
+
+    $sql = "SELECT 
+                o.id_laporan,
+                o.tanggal,
+                o.omzet,
+                u.username AS pelapor,
+                b.nama AS branch_name
+            FROM omzet o
+            LEFT JOIN users u ON o.id_pelapor = u.id_user
+            LEFT JOIN branch b ON o.id_branch = b.id_branch
             WHERE 1=1";
 
-    if ($date_filter) {
-        $sql .= " AND o.tanggal = '$date_filter'";
+    if ($date !== '') {
+        $sql .= " AND o.tanggal = '" . $conn->real_escape_string($date) . "'";
     }
-    if ($branch_filter) {
-        $sql .= " AND o.id_branch = '$branch_filter'";
+
+    if ($branch !== '') {
+        $sql .= " AND o.id_branch = " . intval($branch);
     }
-    
+
     $sql .= " ORDER BY o.tanggal DESC";
 
     $result = $conn->query($sql);
     $rows = [];
-    while($row = $result->fetch_assoc()) {
+
+    while ($row = $result->fetch_assoc()) {
         $rows[] = $row;
     }
+
     echo json_encode($rows);
 }
 
-function getStockHistory($conn) {
-    $date_filter = $_GET['date'] ?? '';
-    $branch_filter = $_GET['branch'] ?? '';
+function getAllOmzet($conn) {
+    $sql = "SELECT 
+                o.id_laporan,
+                o.tanggal,
+                o.omzet,
+                u.username AS pelapor,
+                b.nama AS branch_name
+            FROM omzet o
+            LEFT JOIN users u ON o.id_pelapor = u.id_user
+            LEFT JOIN branch b ON o.id_branch = b.id_branch
+            ORDER BY o.tanggal DESC";
 
-    $sql = "SELECT p.*, b.nama as branch_name 
-            FROM pemakaian p 
-            LEFT JOIN branch b ON p.id_branch = b.id_branch 
+    $result = $conn->query($sql);
+    $rows = [];
+
+    if ($result && $result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $rows[] = $row;
+        }
+    }
+
+    echo json_encode($rows);
+}
+
+
+
+// ==========================
+// DETAIL PEMAKAIAN
+// ==========================
+function getStockHistory($conn) {
+    $date = isset($_GET['date']) ? $_GET['date'] : '';
+    $branch = isset($_GET['branch']) ? $_GET['branch'] : '';
+
+    $sql = "SELECT 
+                p.*,
+                b.nama AS branch_name,
+                u.username AS pelapor
+            FROM pemakaian p
+            LEFT JOIN branch b ON p.id_branch = b.id_branch
+            LEFT JOIN users u ON p.id_pelapor = u.id_user
             WHERE 1=1";
 
-    if ($date_filter) {
-        $sql .= " AND p.tanggal = '$date_filter'";
+    if ($date !== '') {
+        $sql .= " AND p.tanggal = '" . $conn->real_escape_string($date) . "'";
     }
-    if ($branch_filter) {
-        $sql .= " AND p.id_branch = '$branch_filter'";
+
+    if ($branch !== '') {
+        $sql .= " AND p.id_branch = " . intval($branch);
     }
 
     $sql .= " ORDER BY p.tanggal DESC";
 
     $result = $conn->query($sql);
     $rows = [];
-    while($row = $result->fetch_assoc()) {
+
+    while ($row = $result->fetch_assoc()) {
         $rows[] = $row;
     }
+
     echo json_encode($rows);
 }
 
+
+
+// ==========================
+// BRANCH
+// ==========================
 function getBranches($conn) {
-    $sql = "SELECT * FROM branch";
-    $result = $conn->query($sql);
+    $res = $conn->query("SELECT * FROM branch ORDER BY id_branch ASC");
+
     $rows = [];
-    while($row = $result->fetch_assoc()) {
-        $rows[] = $row;
+    while ($r = $res->fetch_assoc()) {
+        $rows[] = $r;
     }
+
     echo json_encode($rows);
 }
 
+
+
+// ADD BRANCH
 function addBranch($conn) {
     $data = json_decode(file_get_contents('php://input'), true);
+
+    if (!$data) {
+        echo json_encode(['success' => false, 'error' => 'Invalid JSON']);
+        return;
+    }
+
     $nama = $data['nama'];
     $alamat = $data['alamat'];
 
     $stmt = $conn->prepare("INSERT INTO branch (nama, alamat) VALUES (?, ?)");
     $stmt->bind_param("ss", $nama, $alamat);
-    
-    if ($stmt->execute()) {
-        echo json_encode(['success' => true]);
-    } else {
-        echo json_encode(['success' => false, 'error' => $conn->error]);
-    }
-}
 
-function updateBranch($conn) {
-    $data = json_decode(file_get_contents('php://input'), true);
-    $id = $data['id'];
-    $nama = $data['nama'];
-    $alamat = $data['alamat'];
-
-    $stmt = $conn->prepare("UPDATE branch SET nama = ?, alamat = ? WHERE id_branch = ?");
-    $stmt->bind_param("ssi", $nama, $alamat, $id);
-    
-    if ($stmt->execute()) {
-        echo json_encode(['success' => true]);
-    } else {
-        echo json_encode(['success' => false, 'error' => $conn->error]);
-    }
-}
-
-function updateOmzet($conn) {
-    $data = json_decode(file_get_contents('php://input'), true);
-    $id = $data['id'];
-    $omzet = $data['omzet'];
-    
-    $stmt = $conn->prepare("UPDATE omzet SET omzet = ? WHERE id_laporan = ?");
-    $stmt->bind_param("di", $omzet, $id);
-    
-    if ($stmt->execute()) {
-        echo json_encode(['success' => true]);
-    } else {
-        echo json_encode(['success' => false, 'error' => $conn->error]);
-    }
-}
-
-function updateStock($conn) {
-    $data = json_decode(file_get_contents('php://input'), true);
-    $id = $data['id'];
-    $arabica = $data['arabica'];
-    $robusta = $data['robusta'];
-    $liberica = $data['liberica'];
-    $decaf = $data['decaf'];
-    $susu = $data['susu'];
-
-    $stmt = $conn->prepare("UPDATE pemakaian SET arabica=?, robusta=?, liberica=?, decaf=?, susu=? WHERE id_laporan=?");
-    $stmt->bind_param("dddddi", $arabica, $robusta, $liberica, $decaf, $susu, $id);
-    
-    if ($stmt->execute()) {
-        echo json_encode(['success' => true]);
-    } else {
-        echo json_encode(['success' => false, 'error' => $conn->error]);
-    }
-}
-
-function deleteBranch($conn) {
-    $id = $_POST['id'];
-    $stmt = $conn->prepare("DELETE FROM branch WHERE id_branch = ?");
-    $stmt->bind_param("i", $id);
     if ($stmt->execute()) {
         echo json_encode(['success' => true]);
     } else {
