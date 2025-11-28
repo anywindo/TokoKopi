@@ -1,5 +1,4 @@
 <?php
-session_start();
 include 'koneksi.php'; 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -12,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die("empty username or password.");
     }
 
-    $stmt = $conn->prepare("SELECT id_user, role, password FROM users WHERE username=?");
+    $stmt = $conn->prepare("SELECT role, password FROM users WHERE username=?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -22,22 +21,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $row = $result->fetch_assoc(); // fetch the row once
         $actualPassword = $row['password'];
         $role = $row['role'];
-        $id_user = $row['id_user'];
     }
     $stmt->close();
 
     if (password_verify($password, $actualPassword)) {
-        // Set session variables
+        session_start();
         $_SESSION['username'] = $username;
         $_SESSION['role'] = $role;
-        $_SESSION['id_user'] = $id_user;
 
-        if($role === "manager") {
-            header("Location: ../frontend/manager.xhtml");
-        } else if($role === "corporate"){
-            header("Location: ../frontend/corporate.xhtml");
-        }else{
-            echo "error role." + $role;
+        if ($role === 'corporate') {
+            header("Location: ../views/corporate.xhtml");
+        } else { 
+            header("Location: ../views/manager.xhtml");
         }
         exit();
     } else {

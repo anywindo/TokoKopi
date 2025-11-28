@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Corporate Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Baskervville:ital@0;1&amp;family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&amp;display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+
+<body>
+
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <a href="../index.xhtml" class="text-2xl font-bold text-[#d7ccc8] no-underline hover:text-white">brew.</a>
+      </div>
+      <ul class="sidebar-menu">
+        <li>
+          <a href="profile.xhtml"
+            class="w-full flex flex-col items-center justify-center text-center !px-0 !py-6 !border-none hover:!bg-transparent">
+            <img src="../assets/coffe-bean.svg" alt="Profile"
+              class="block mx-auto w-16 h-16 rounded-full border-2 border-[#8c6a48] p-1 bg-[#f0e0c9] shadow-lg" />
+            <span id="sidebar-username">Hello, User</span>
+          </a>
+        </li>
+        <li><a href="#" onclick="showTab('dashboard')" id="nav-dashboard" class="active">Dashboard</a></li>
+        <li><a href="#" onclick="showTab('revenue')" id="nav-revenue">Revenue History</a></li>
+        <li><a href="#" onclick="showTab('stock')" id="nav-stock">Stock History</a></li>
+        <li><a href="#" onclick="showTab('branches')" id="nav-branches">Manage Branches</a></li>
+
+        <li class="push-bottom"><a href="../index.xhtml" class="text-red-400 hover:text-red-200">Logout</a></li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+      <!-- DASHBOARD TAB -->
+      <div id="tab-dashboard">
+        <h2 class="section-title">Executive Overview</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+          <!-- Revenue Chart -->
+          <div class="paper-card p-4">
+            <h3 class="text-lg font-bold text-[#8c6a48] mb-4">7-Day Revenue Trend</h3>
+            <canvas id="revenueChart"></canvas>
+          </div>
+
+          <!-- Stock Chart -->
+          <div class="paper-card p-4">
+            <h3 class="text-lg font-bold text-[#8c6a48] mb-4">Avg. Daily Stock Usage</h3>
+            <canvas id="stockChart"></canvas>
+          </div>
+        </div>
+
+        <div class="paper-card p-4">
+          <h3 class="text-lg font-bold text-[#8c6a48] mb-4">Revenue by Branch (7 Days)</h3>
+          <canvas id="branchChart" height="100"></canvas>
+        </div>
+      </div>
+
+      <!-- REVENUE HISTORY TAB -->
+      <div id="tab-revenue" class="hidden">
+        <h2 class="section-title">Revenue Reports</h2>
+
+        <!-- Filters -->
+        <div class="flex gap-4 mb-4">
+          <input type="date" id="rev-date" class="skeuo-input-box" onchange="loadRevenue()" />
+          <select id="rev-branch" class="skeuo-input-box" onchange="loadRevenue()">
+            <option value="">All Branches</option>
+          </select>
+        </div>
+
+        <div class="table-container">
+          <table class="skeuo-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Branch</th>
+                <th>Reporter</th>
+                <th>Gross Revenue</th>
+              </tr>
+            </thead>
+            <tbody id="revenue-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- STOCK HISTORY TAB -->
+      <div id="tab-stock" class="hidden">
+        <h2 class="section-title">Stock Reports</h2>
+
+        <!-- Filters -->
+        <div class="flex gap-4 mb-4">
+          <input type="date" id="stock-date" class="skeuo-input-box" onchange="loadStock()" />
+          <select id="stock-branch" class="skeuo-input-box" onchange="loadStock()">
+            <option value="">All Branches</option>
+          </select>
+        </div>
+
+        <div class="table-container">
+          <table class="skeuo-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Branch</th>
+                <th>Arabica</th>
+                <th>Robusta</th>
+                <th>Liberica</th>
+                <th>Decaf</th>
+                <th>Milk</th>
+              </tr>
+            </thead>
+            <tbody id="stock-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- BRANCHES TAB -->
+      <div id="tab-branches" class="hidden">
+        <h2 class="section-title">Branch Management</h2>
+
+        <div class="paper-card mb-8 p-4">
+          <h3 class="text-lg font-bold text-[#8c6a48] mb-4">Add New Branch</h3>
+          <form onsubmit="addBranch(event)" class="flex flex-wrap gap-4 items-end">
+            <div class="flex-grow">
+              <label class="input-label block mb-1">Name</label>
+              <input type="text" name="nama" class="skeuo-input-box w-full" required="required" />
+            </div>
+            <div class="flex-grow-[2]">
+              <label class="input-label block mb-1">Address</label>
+              <input type="text" name="alamat" class="skeuo-input-box w-full" required="required" />
+            </div>
+            <button type="submit" class="btn-skeuo w-auto px-6 py-2 text-sm">Add</button>
+          </form>
+        </div>
+
+        <div class="table-container">
+          <table class="skeuo-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="branch-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- EDIT MODAL -->
+  <div id="edit-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+    <div class="paper-card p-6 w-full max-w-md relative">
+      <button onclick="closeEditModal()"
+        class="absolute top-2 right-2 text-[#8c6a48] font-bold text-xl">&times;</button>
+      <h2 class="text-xl font-bold text-[#4e342e] mb-4 border-b border-[#c0a080] pb-2">Edit Record</h2>
+
+      <form id="edit-form" onsubmit="submitEdit(event)">
+        <input type="hidden" name="id" id="edit-id" />
+        <input type="hidden" name="type" id="edit-type" />
+
+        <div id="edit-fields" class="space-y-4">
+          <!-- Fields injected by JS -->
+        </div>
+
+        <div class="mt-6 flex justify-end gap-2">
+          <button type="button" onclick="closeEditModal()"
+            class="px-4 py-2 rounded border border-[#c0a080] text-[#8c6a48] font-bold hover:bg-[#f0e0c9]">Cancel</button>
+          <button type="submit"
+            class="px-4 py-2 rounded bg-[#8c6a48] text-white font-bold shadow hover:bg-[#5d4037]">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    //<![CDATA[
+    // --- TABS ---
+    function showTab(tabId) {
+      ['dashboard', 'revenue', 'stock', 'branches'].forEach(id => {
+        document.getElementById('tab-' + id).classList.add('hidden');
+        document.getElementById('nav-' + id).classList.remove('active');
+      });
+      document.getElementById('tab-' + tabId).classList.remove('hidden');
+      document.getElementById('nav-' + tabId).classList.add('active');
+    }
+
+    // --- API ---
+    async function api(action, method = 'GET', data = null) {
+      const options = { method };
+      if (data) {
+        options.body = JSON.stringify(data);
+        options.headers = { 'Content-Type': 'application/json' };
+      }
+      const res = await fetch(`../api/corporate_api.php?action=${action}`, options);
+      return await res.json();
+    }
+
+    // --- DASHBOARD ---
+    async function loadDashboard() {
+      const data = await api('get_dashboard_data');
+
+      // Revenue Chart
+      new Chart(document.getElementById('revenueChart'), {
+        type: 'line',
+        data: {
+          labels: data.revenue_chart.map(d => d.tanggal),
+          datasets: [{
+            label: 'Revenue',
+            data: data.revenue_chart.map(d => d.total),
+            borderColor: '#8c6a48',
+            tension: 0.4
+          }]
+        }
+      });
+
+      // Stock Chart
+      if (data.stock_avg) {
+        new Chart(document.getElementById('stockChart'), {
+          type: 'bar',
+          data: {
+            labels: ['Arabica', 'Robusta', 'Liberica', 'Decaf', 'Milk'],
+            datasets: [{
+              label: 'Avg Usage',
+              data: [data.stock_avg.arabica, data.stock_avg.robusta, data.stock_avg.liberica, data.stock_avg.decaf, data.stock_avg.susu],
+              backgroundColor: '#d4bba2'
+            }]
+          }
+        });
+      }
+
+      // Branch Chart
+      new Chart(document.getElementById('branchChart'), {
+        type: 'bar',
+        data: {
+          labels: data.branch_revenue.map(d => d.nama),
+          datasets: [{
+            label: 'Total Revenue',
+            data: data.branch_revenue.map(d => d.total),
+            backgroundColor: '#5d4037'
+          }]
+        }
+      });
+    }
+
+    // --- REVENUE ---
+    async function loadRevenue() {
+      const date = document.getElementById('rev-date').value;
+      const branch = document.getElementById('rev-branch').value;
+      const url = `get_revenue_history&date=${date}&branch=${branch}`;
+
+      // Manual fetch for query params
+      const res = await fetch(`../api/corporate_api.php?action=${url}`);
+      const data = await res.json();
+
+      const tbody = document.getElementById('revenue-table-body');
+      tbody.innerHTML = '';
+      data.forEach(row => {
+        tbody.innerHTML += `<tr>
+                    <td>${row.tanggal}</td>
+                    <td>${row.branch_name}</td>
+                    <td>${row.pelapor}</td>
+                    <td>Rp ${parseInt(row.omzet).toLocaleString()}</td>
+                </tr>`;
+      });
+    }
+
+    // --- STOCK ---
+    async function loadStock() {
+      const date = document.getElementById('stock-date').value;
+      const branch = document.getElementById('stock-branch').value;
+      const url = `get_stock_history&date=${date}&branch=${branch}`;
+
+      const res = await fetch(`../api/corporate_api.php?action=${url}`);
+      const data = await res.json();
+
+      const tbody = document.getElementById('stock-table-body');
+      tbody.innerHTML = '';
+      data.forEach(row => {
+        tbody.innerHTML += `<tr>
+                    <td>${row.tanggal}</td>
+                    <td>${row.branch_name}</td>
+                    <td>${row.arabica}</td>
+                    <td>${row.robusta}</td>
+                    <td>${row.liberica}</td>
+                    <td>${row.decaf}</td>
+                    <td>${row.susu}</td>
+                </tr>`;
+      });
+    }
+
+    // --- BRANCHES ---
+    async function loadBranches() {
+      const data = await api('get_branches');
+      const tbody = document.getElementById('branch-table-body');
+      const selectRev = document.getElementById('rev-branch');
+      const selectStock = document.getElementById('stock-branch');
+
+      // Populate Table
+      tbody.innerHTML = '';
+      data.forEach(row => {
+        // Fix: Escape single quotes for the onclick attribute
+        const rowData = encodeURIComponent(JSON.stringify(row)).replace(/'/g, '%27');
+        tbody.innerHTML += `<tr>
+                    <td>${row.id_branch}</td>
+                    <td>${row.nama}</td>
+                    <td>${row.alamat}</td>
+                    <td>
+                        <button onclick="openEditModal('branch', '${rowData}')" class="action-btn btn-edit">Edit</button>
+                        <button onclick="deleteBranch(${row.id_branch})" class="action-btn btn-delete">Delete</button>
+                    </td>
+                </tr>`;
+      });
+
+      // Populate Filters
+      const opts = '<option value="">All Branches</option>' + data.map(b => `<option value="${b.id_branch}">${b.nama}</option>`).join('');
+      selectRev.innerHTML = opts;
+      selectStock.innerHTML = opts;
+    }
+
+    async function addBranch(e) {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData.entries());
+      const res = await api('add_branch', 'POST', data);
+      if (res.success) {
+        e.target.reset();
+        loadBranches();
+      }
+    }
+
+    async function deleteBranch(id) {
+      if (!confirm('Delete branch?')) return;
+      const formData = new FormData();
+      formData.append('id', id);
+      await fetch('../api/corporate_api.php?action=delete_branch', { method: 'POST', body: formData });
+      loadBranches();
+    }
+
+    // --- EDIT MODAL LOGIC ---
+    function openEditModal(type, encodedData) {
+      const data = JSON.parse(decodeURIComponent(encodedData));
+      const modal = document.getElementById('edit-modal');
+      const fields = document.getElementById('edit-fields');
+
+      document.getElementById('edit-type').value = type;
+
+      fields.innerHTML = '';
+
+      // Helper to safe escape for HTML attributes
+      const safe = (str) => str ? String(str).replace(/"/g, '&quot;') : '';
+
+      if (type === 'branch') {
+        document.getElementById('edit-id').value = data.id_branch;
+        fields.innerHTML = `
+                <div>
+                    <label class="input-label block mb-1">Name</label>
+                    <input type="text" name="nama" value="${safe(data.nama)}" class="skeuo-input-box w-full" required="required" />
+                </div>
+                <div>
+                    <label class="input-label block mb-1">Address</label>
+                    <input type="text" name="alamat" value="${safe(data.alamat)}" class="skeuo-input-box w-full" required="required" />
+                </div>
+            `;
+      } else if (type === 'revenue') {
+        document.getElementById('edit-id').value = data.id_laporan;
+        fields.innerHTML = `
+                <div>
+                    <label class="input-label block mb-1">Revenue Amount</label>
+                    <input type="number" name="omzet" value="${data.omzet}" class="skeuo-input-box w-full" required="required" />
+                </div>
+                <div class="text-xs text-gray-500 italic">Date: ${data.tanggal} | Branch: ${data.branch_name}</div>
+            `;
+      } else if (type === 'stock') {
+        document.getElementById('edit-id').value = data.id_laporan;
+        fields.innerHTML = `
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="input-label block mb-1">Arabica</label><input type="number" name="arabica" value="${data.arabica}" class="skeuo-input-box w-full" /></div>
+                    <div><label class="input-label block mb-1">Robusta</label><input type="number" name="robusta" value="${data.robusta}" class="skeuo-input-box w-full" /></div>
+                    <div><label class="input-label block mb-1">Liberica</label><input type="number" name="liberica" value="${data.liberica}" class="skeuo-input-box w-full" /></div>
+                    <div><label class="input-label block mb-1">Decaf</label><input type="number" name="decaf" value="${data.decaf}" class="skeuo-input-box w-full" /></div>
+                    <div><label class="input-label block mb-1">Milk</label><input type="number" name="susu" value="${data.susu}" class="skeuo-input-box w-full" /></div>
+                </div>
+                <div class="text-xs text-gray-500 italic mt-2">Date: ${data.tanggal} | Branch: ${data.branch_name}</div>
+            `;
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeEditModal() {
+      document.getElementById('edit-modal').classList.add('hidden');
+    }
+
+    async function submitEdit(e) {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData.entries());
+      const type = data.type;
+
+      let action = '';
+      if (type === 'branch') action = 'update_branch';
+      if (type === 'revenue') action = 'update_omzet';
+      if (type === 'stock') action = 'update_stock';
+
+      const res = await api(action, 'POST', data);
+
+      if (res.success) {
+        closeEditModal();
+        if (type === 'branch') loadBranches();
+        if (type === 'revenue') loadRevenue();
+        if (type === 'stock') loadStock();
+      } else {
+        alert('Update failed: ' + res.error);
+      }
+    }
+
+    // Init
+    document.addEventListener('DOMContentLoaded', () => {
+      loadDashboard();
+      loadBranches();
+      loadRevenue();
+      loadStock();
+      loadUserProfile();
+    });
+
+    async function loadUserProfile() {
+      try {
+        const res = await fetch('../api/profile_api.php');
+        const data = await res.json();
+        if (data.username) {
+          document.getElementById('sidebar-username').textContent = 'Hello, ' + data.username;
+        }
+      } catch (e) {
+        console.error('Failed to load profile', e);
+      }
+    }
+    //]]>
+  </script>
+</body>
+
+</html>
