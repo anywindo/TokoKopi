@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Change Profile Picture</title>
+  </head>
+
+  <body>
+    <h3>Change Profile Picture</h3>
+
+    <form action="../api/upload_pfp.php" method="post" enctype="multipart/form-data">
+      <p>Select new profile picture:</p>
+
+      <input type="file" name="photo" accept="image/*" required="required" /><br /><br />
+
+      <!-- Auto-filled, locked user ID (hidden) -->
+      <input type="hidden" id="user-id" name="id_user" />
+
+      <button type="submit">Upload</button>
+    </form>
+
+    <script type="text/javascript">
+      function loadUserID() {
+        fetch('../api/profile_api.php', { method: 'GET' })
+          .then(function(res) { return res.json(); })
+          .then(function(user) {
+
+            if (user.error) {
+              window.location.href = '../index.xhtml';
+              return;
+            }
+
+            // Insert ID into hidden field
+            document.getElementById('user-id').value = user.id_user;
+          })
+          .catch(function(e) {
+            console.error(e);
+          });
+      }
+
+      document.addEventListener('DOMContentLoaded', loadUserID, false);
+    </script>
+  </body>
+</html>

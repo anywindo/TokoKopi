@@ -28,7 +28,7 @@
         <li>
           <a href="profile.xhtml"
             class="w-full flex flex-col items-center justify-center text-center !px-0 !py-6 !border-none hover:!bg-transparent">
-            <img src="../assets/coffe-bean.svg" alt="Profile"
+            <img src="../assets/coffe-bean.svg" alt="Profile" id="profile-picture"
               class="block mx-auto w-16 h-16 rounded-full border-2 border-[#8c6a48] p-1 bg-[#f0e0c9] shadow-lg" />
             <span id="sidebar-username">Hello, User</span>
           </a>
@@ -460,6 +460,7 @@
         const data = await res.json();
         if (data.username) {
           document.getElementById('sidebar-username').textContent = 'Hello, ' + data.username;
+          document.getElementById('profile-picture').src = '../api/get_pfp.php?id=' + encodeURIComponent(data.id_user);
         }
       } catch (e) {
         console.error('Failed to load profile', e);

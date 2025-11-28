@@ -16,12 +16,7 @@
 </head>
 
 <body>
-
-    <div class="global-header">
-        <a href="#" class="global-header-logo">Brew. Profile</a>
-    </div>
-
-    <div class="dashboard-container pt-[60px]">
+    <div class="dashboard-container">
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="sidebar-header">
@@ -30,14 +25,6 @@
             </div>
             <ul class="sidebar-menu" id="sidebar-menu">
                 <!-- Injected by JS -->
-                <li>
-                    <a href="#"
-                        class="active flex flex-col items-center justify-center text-center py-6 !p-0 !border-none hover:!bg-transparent">
-                        <img src="../assets/coffe-bean.svg" alt="Profile"
-                            class="w-16 h-16 rounded-full border-2 border-[#8c6a48] p-1 bg-[#f0e0c9] shadow-lg" />
-                        <span class="text-xs uppercase tracking-widest mt-2 font-bold text-[#d7ccc8]">Profile</span>
-                    </a>
-                </li>
                 <li><a href="../index.xhtml" class="text-red-400 hover:text-red-200">Logout</a></li>
             </ul>
 
@@ -57,12 +44,12 @@
 
             <div class="max-w-md mx-auto mt-8">
                 <div class="paper-card p-8 text-center">
-
-                    <div class="leather-patch mx-auto mb-6">
-                        <img src="../assets/coffe-bean.svg" alt="Profile"
-                            onerror="this.style.display='none'; this.parentElement.innerHTML+='&lt;span style=\'font-size:40px; color:#5d4037\'&gt;👤&lt;/span&gt;'" />
-                    </div>
-
+                    <a href="temp_upload.xhtml">
+                        <div class="leather-patch mx-auto mb-6">
+                            <img src="../assets/coffe-bean.svg" alt="Profile" id="profile-picture"
+                                onerror="this.src='../assets/coffe-bean.svg';"/>
+                        </div>
+                    </a>
                     <h3 id="profile-username" class="text-2xl font-bold text-[#4e342e] mb-2">Loading...</h3>
                     <p id="profile-role" class="text-[#8c6a48] uppercase tracking-widest font-bold text-sm mb-8">...</p>
 
@@ -99,34 +86,49 @@
                     return;
                 }
 
-                // Update Profile UI
                 document.getElementById('profile-username').textContent = user.username;
                 document.getElementById('profile-role').textContent = user.role;
                 document.getElementById('profile-id').textContent = '#' + user.id_user;
 
-                // Update Sidebar based on Role
+                // Set dynamic PFP
+                document.getElementById('profile-picture').src = '../api/get_pfp.php?id=' + encodeURIComponent(user.id_user);
+
                 const menu = document.getElementById('sidebar-menu');
                 const title = document.getElementById('sidebar-title');
 
                 let dashboardLink = '#';
+
                 if (user.role === 'corporate') {
                     dashboardLink = 'corporate.xhtml';
                     title.textContent = 'Brew. Corp';
                 } else if (user.role === 'manager') {
                     dashboardLink = 'manager.xhtml';
                     title.textContent = 'Brew. Manager';
+                } else {
+                    dashboardLink = 'staff.xhtml';
+                    title.textContent = 'Brew.';
                 }
 
-                menu.innerHTML = `
-                <li>
-                    <a href="#" class="active flex flex-col items-center justify-center text-center py-6 !p-0 !border-none hover:!bg-transparent">
-                        <img src="../assets/coffe-bean.svg" alt="Profile" class="w-16 h-16 rounded-full border-2 border-[#8c6a48] p-1 bg-[#f0e0c9] shadow-lg" />
-                        <span id="sidebar-username-static" class="font-bold text-[#d7ccc8] mt-4 text-base">Hello, User</span>
-                    </a>
-                </li>
-                <li><a href="${dashboardLink}">Dashboard</a></li>
-                <li class="push-bottom"><a href="../index.xhtml" class="text-red-400 hover:text-red-200">Logout</a></li>
-            `;
+                // ---------- Build menu safely (no innerHTML) ----------
+                menu.innerHTML = ''; // clear existing items
+
+                // Dashboard
+                const li1 = document.createElement('li');
+                const a1 = document.createElement('a');
+                a1.href = dashboardLink;
+                a1.className = 'hover:text-white';
+                a1.textContent = 'Dashboard';
+                li1.appendChild(a1);
+                menu.appendChild(li1);
+
+                // Logout
+                const li2 = document.createElement('li');
+                const a2 = document.createElement('a');
+                a2.href = '../index.xhtml';
+                a2.className = 'text-red-400 hover:text-red-200';
+                a2.textContent = 'Logout';
+                li2.appendChild(a2);
+                menu.appendChild(li2);
 
             } catch (e) {
                 console.error(e);
@@ -135,6 +137,8 @@
 
         document.addEventListener('DOMContentLoaded', loadProfile);
     </script>
+
+
 </body>
 
 </html>

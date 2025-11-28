@@ -11,6 +11,6 @@ if (!isset($_SESSION['role'])) {
 echo json_encode([
     'username' => $_SESSION['username'] ?? 'User',
     'role' => $_SESSION['role'],
-    'id_user' => $_SESSION['user_id'] ?? 0
+    'id_user' => $_SESSION['id_user'] ?? 0
 ]);
 ?>
