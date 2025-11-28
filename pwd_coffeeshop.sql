@@ -76,6 +76,7 @@ CREATE TABLE `users` (
   `id_user` int(11) NOT NULL,
   `username` varchar(255) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
+  `photo` LONGBLOB,
   `role` enum('manager','corporate') DEFAULT NULL,
   `telp` varchar(50) DEFAULT NULL,
   `id_branch` int(11) DEFAULT NULL
