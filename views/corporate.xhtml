@@ -345,12 +345,27 @@
     }
 
     async function deleteBranch(id) {
-      if (!confirm('Delete branch?')) return;
-      const formData = new FormData();
-      formData.append('id', id);
-      await fetch('../api/corporate_api.php?action=delete_branch', { method: 'POST', body: formData });
-      loadBranches();
+        if (!confirm('Delete branch?')) return;
+
+        const formData = new FormData();
+        formData.append('id', id);
+
+        const res = await fetch('../api/corporate_api.php?action=delete_branch', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await res.json();
+
+        if (!data.success) {
+            alert("Gagal delete: " + data.error);
+            return;
+        }
+
+        alert("Berhasil dihapus");
+        loadBranches();
     }
+
 
     // --- EDIT MODAL LOGIC ---
     function openEditModal(type, encodedData) {

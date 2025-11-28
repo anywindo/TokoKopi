@@ -244,30 +244,42 @@ function addBranch($conn) {
     }
 }
 
+// DELETE BRANCH BLM JADI SU
 function deleteBranch($conn) {
-    $data = json_decode(file_get_contents('php://input'), true);
 
-    if (!$data || !isset($data['id'])) {
-        echo json_encode(['success' => false, 'error' => 'Invalid ID']);
+    if (!isset($_POST['id'])) {
+        echo json_encode(['success' => false, 'error' => 'ID tidak diterima backend']);
         return;
     }
 
-    $id = intval($data['id']);
+    $id = intval($_POST['id']);
 
-    $check = $conn->query("SELECT * FROM omzet WHERE id_branch = $id LIMIT 1");
+    // Cek omzet
+    $check = $conn->query("SELECT 1 FROM omzet WHERE id_branch = $id LIMIT 1");
     if ($check->num_rows > 0) {
         echo json_encode([
             'success' => false,
-            'error' => 'Branch tidak bisa dihapus karena memiliki laporan'
+            'error' => 'Branch tidak bisa dihapus karena memiliki laporan omzet'
         ]);
         return;
     }
 
-    $check2 = $conn->query("SELECT * FROM pemakaian WHERE id_branch = $id LIMIT 1");
+    // Cek pemakaian
+    $check2 = $conn->query("SELECT 1 FROM pemakaian WHERE id_branch = $id LIMIT 1");
     if ($check2->num_rows > 0) {
         echo json_encode([
             'success' => false,
-            'error' => 'Branch tidak bisa dihapus karena memiliki data stock'
+            'error' => 'Branch tidak bisa dihapus karena memiliki laporan pemakaian'
+        ]);
+        return;
+    }
+
+    // Cek users
+    $check3 = $conn->query("SELECT 1 FROM users WHERE id_branch = $id LIMIT 1");
+    if ($check3->num_rows > 0) {
+        echo json_encode([
+            'success' => false,
+            'error' => 'Branch tidak bisa dihapus karena memiliki user terkait'
         ]);
         return;
     }
@@ -282,6 +294,8 @@ function deleteBranch($conn) {
     }
 }
 
+
+// EDIT BRANCH
 function updateBranch($conn) {
     $data = json_decode(file_get_contents('php://input'), true);
 
