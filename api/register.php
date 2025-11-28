@@ -9,14 +9,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password2 = $_POST['password2'];
     $telp = trim($_POST['phone']); 
     $role = $_POST['role'];
-    $branch_name = $_POST['branch'];
+    $branch_name = $_POST['branch'] ?? null;
 
     if ($password !== $password2) {
         die("Passwords do not match.");
     }
 
-    if (empty($branch_name)) {
-        die("Branch must be selected.");
+    if ($role === 'manager' && empty($branch_name)) {
+        die("Branch must be selected for Managers.");
     }
 
     $stmt = $conn->prepare("SELECT id_user FROM users WHERE username=?");
@@ -28,19 +28,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     $stmt->close();
 
-    $stmt = $conn->prepare("SELECT id_branch FROM branch WHERE nama=?");
-    $stmt->bind_param("s", $branch_name);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    if ($result->num_rows === 0) {
-        die("Invalid branch selected.");
+    $id_branch = null;
+    if ($role === 'manager') {
+        $stmt = $conn->prepare("SELECT id_branch FROM branch WHERE nama=?");
+        $stmt->bind_param("s", $branch_name);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result->num_rows === 0) {
+            die("Invalid branch selected.");
+        }
+        $row = $result->fetch_assoc();
+        $id_branch = $row['id_branch'];
+        $stmt->close();
     }
-    $row = $result->fetch_assoc();
-    $id_branch = $row['id_branch'];
-    $stmt->close();
 
     // hash password
-    $password_hash = password_hash($password, PASSWORD_ARGON2ID);
+    $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
     $stmt = $conn->prepare(
         "INSERT INTO users (username, password, role, telp, id_branch) VALUES (?, ?, ?, ?, ?)"
@@ -48,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("ssssi", $username, $password_hash, $role, $telp, $id_branch);
 
     if ($stmt->execute()) {
-        header("Location: ../frontend/registerSukses.xhtml");
+        header("Location: ../index.xhtml");
     } else {
         die("Database insert failed: " . $stmt->error);
     }
