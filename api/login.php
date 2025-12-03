@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($result->num_rows === 0) {
         die("no user with this username.");
     }else{
-        $row = $result->fetch_assoc(); // fetch the row once
+        $row = $result->fetch_assoc();
         $actualPassword = $row['password'];
         $role = $row['role'];
     }

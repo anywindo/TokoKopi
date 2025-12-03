@@ -4,13 +4,11 @@ session_start();
 
 header('Content-Type: application/json');
 
-// Auth Check
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'manager') {
     echo json_encode(['error' => 'Unauthorized']);
     exit();
 }
 
-// Get User's Branch
 $username = $_SESSION['username'];
 $stmt = $conn->prepare("SELECT id_branch, id_user FROM users WHERE username = ?");
 $stmt->bind_param("s", $username);
@@ -37,7 +35,7 @@ switch ($action) {
         addStock($conn, $my_branch_id, $my_user_id);
         break;
     case 'delete_report':
-        deleteReport($conn, $my_branch_id); // Pass branch ID to ensure they only delete their own
+        deleteReport($conn, $my_branch_id);
         break;
     default:
         echo json_encode(['error' => 'Invalid action']);
@@ -46,11 +44,31 @@ switch ($action) {
 
 function getHistory($conn, $branch_id) {
     $data = [];
+    
+    $rev_start = $_GET['rev_start'] ?? '';
+    $rev_end = $_GET['rev_end'] ?? '';
+    
+    $stock_start = $_GET['stock_start'] ?? '';
+    $stock_end = $_GET['stock_end'] ?? '';
 
-    // Revenue History
-    $sql = "SELECT * FROM omzet WHERE id_branch = ? ORDER BY tanggal DESC";
+    $sql = "SELECT * FROM omzet WHERE id_branch = ?";
+    $params = [$branch_id];
+    $types = "i";
+
+    if ($rev_start !== '') {
+        $sql .= " AND tanggal >= ?";
+        $params[] = $rev_start;
+        $types .= "s";
+    }
+    if ($rev_end !== '') {
+        $sql .= " AND tanggal <= ?";
+        $params[] = $rev_end;
+        $types .= "s";
+    }
+    $sql .= " ORDER BY tanggal DESC";
+
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $branch_id);
+    $stmt->bind_param($types, ...$params);
     $stmt->execute();
     $res = $stmt->get_result();
     $revenue = [];
@@ -59,10 +77,24 @@ function getHistory($conn, $branch_id) {
     }
     $data['revenue'] = $revenue;
 
-    // Stock History
-    $sql = "SELECT * FROM pemakaian WHERE id_branch = ? ORDER BY tanggal DESC";
+    $sql = "SELECT * FROM pemakaian WHERE id_branch = ?";
+    $params = [$branch_id];
+    $types = "i";
+
+    if ($stock_start !== '') {
+        $sql .= " AND tanggal >= ?";
+        $params[] = $stock_start;
+        $types .= "s";
+    }
+    if ($stock_end !== '') {
+        $sql .= " AND tanggal <= ?";
+        $params[] = $stock_end;
+        $types .= "s";
+    }
+    $sql .= " ORDER BY tanggal DESC";
+
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $branch_id);
+    $stmt->bind_param($types, ...$params);
     $stmt->execute();
     $res = $stmt->get_result();
     $stock = [];
@@ -109,7 +141,7 @@ function addStock($conn, $branch_id, $user_id) {
 }
 
 function deleteReport($conn, $branch_id) {
-    $type = $_POST['type']; // 'revenue' or 'stock'
+    $type = $_POST['type'];
     $id = $_POST['id'];
 
     if ($type === 'revenue') {

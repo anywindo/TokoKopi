@@ -5,8 +5,8 @@ function toggleView(view) {
     if (view === 'register') {
         loginView.classList.add('hidden');
         registerView.classList.remove('hidden');
-        loadBranches(); // Load branches when switching to register view
-        toggleBranchSelection(); // Ensure correct state on load
+        loadBranches();
+        toggleBranchSelection();
     } else {
         loginView.classList.remove('hidden');
         registerView.classList.add('hidden');
@@ -21,7 +21,7 @@ function toggleBranchSelection() {
     if (role === 'corporate') {
         branchRow.classList.add('hidden');
         branchSelect.removeAttribute('required');
-        branchSelect.value = ""; // Clear selection
+        branchSelect.value = "";
     } else {
         branchRow.classList.remove('hidden');
         branchSelect.setAttribute('required', 'required');
@@ -30,7 +30,7 @@ function toggleBranchSelection() {
 
 function loadBranches() {
     const select = document.getElementById('branch-select');
-    if (select.options.length > 1) return; // Already loaded
+    if (select.options.length > 1) return;
 
     fetch('api/get_branches.php')
         .then(response => response.json())

@@ -47,13 +47,11 @@ function checkSession() {
 function getStats($conn) {
     $stats = [];
     
-    // Top Sales (Highest Omzet)
     $sql = "SELECT MAX(omzet) as max_omzet FROM omzet";
     $result = $conn->query($sql);
     $row = $result->fetch_assoc();
     $stats['top_sales'] = $row['max_omzet'] ? 'Rp ' . number_format($row['max_omzet'], 0, ',', '.') : 'Rp 0';
 
-    // Top Branch (Most Revenue)
     $sql = "SELECT b.nama, SUM(o.omzet) as total_omzet 
             FROM omzet o 
             JOIN branch b ON o.id_branch = b.id_branch 
@@ -67,8 +65,6 @@ function getStats($conn) {
         $stats['top_branch'] = '-';
     }
 
-    // Top Product (Highest Usage - Simplified logic: max of any bean type)
-    // This is a bit complex with current schema, simplifying to just finding max of one type for demo
     $sql = "SELECT SUM(arabica) as arabica, SUM(robusta) as robusta, SUM(liberica) as liberica 
             FROM pemakaian";
     $result = $conn->query($sql);
@@ -105,9 +101,8 @@ function addUser($conn) {
     $username = $data['username'];
     $password = password_hash($data['password'], PASSWORD_ARGON2ID);
     $role = $data['role'];
-    $branch_id = $data['branch_id']; // Assuming ID is passed, or name if logic adapted
+    $branch_id = $data['branch_id'];
 
-    // Simple insert (needs validation in real app)
     $stmt = $conn->prepare("INSERT INTO users (username, password, role, id_branch) VALUES (?, ?, ?, ?)");
     $stmt->bind_param("sssi", $username, $password, $role, $branch_id);
     

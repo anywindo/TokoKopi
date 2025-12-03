@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Profile - Brew.</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../js/profile.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
     <link
@@ -17,124 +18,117 @@
 
 <body>
 
-    <div class="global-header">
-        <a href="#" class="global-header-logo">Brew. Profile</a>
-    </div>
-
-    <div class="dashboard-container pt-[60px]">
-        <!-- Sidebar -->
+    <div class="dashboard-container">
+        
         <div class="sidebar">
             <div class="sidebar-header">
-                <a href="#" id="sidebar-title"
-                    class="text-2xl font-bold text-[#d7ccc8] no-underline hover:text-white">Brew.</a>
+                <a href="#" id="sidebar-title-link"
+                    class="text-2xl font-bold text-[#3e2723] no-underline hover:text-[#8d6e63] transition-colors">brew.</a>
             </div>
             <ul class="sidebar-menu" id="sidebar-menu">
-                <!-- Injected by JS -->
                 <li>
-                    <a href="#"
-                        class="active flex flex-col items-center justify-center text-center py-6 !p-0 !border-none hover:!bg-transparent">
-                        <img src="../assets/coffe-bean.svg" alt="Profile"
-                            class="w-16 h-16 rounded-full border-2 border-[#8c6a48] p-1 bg-[#f0e0c9] shadow-lg" />
-                        <span class="text-xs uppercase tracking-widest mt-2 font-bold text-[#d7ccc8]">Profile</span>
+                    <a href="profile.xhtml" class="profile-card-link">
+                        <div class="profile-card">
+                            <img src="../assets/coffe-bean.svg" alt="Profile" class="profile-avatar-small" />
+                            <div class="profile-info">
+                                <span class="profile-name" id="sb-name">Loading...</span>
+                                <span class="profile-role" id="sb-role">...</span>
+                            </div>
+                        </div>
                     </a>
                 </li>
-                <li><a href="../index.xhtml" class="text-red-400 hover:text-red-200">Logout</a></li>
+                <li>
+                    <a href="#" id="sb-dashboard" class="flex items-center">
+                        <img src="../assets/dashboard.svg" class="w-5 h-5 mr-2 inline-block opacity-70" alt="" />
+                        <span id="sb-dashboard-text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="push-bottom">
+                    <a href="../api/logout.php" class="text-red-400 hover:text-red-200 flex items-center">
+                        <img src="../assets/logout.svg" class="w-5 h-5 mr-2 inline-block opacity-70" alt="" />
+                        Logout
+                    </a>
+                </li>
             </ul>
-
-            <div class="sidebar-footer">
-                <a href="#" class="footer-btn active">
-                    <span>👤</span> Profile
-                </a>
-                <a href="../index.xhtml" class="footer-btn text-red-300 hover:text-red-100">
-                    <span>🚪</span> Logout
-                </a>
-            </div>
         </div>
 
-        <!-- Main Content -->
+        
         <div class="main-content">
             <h2 class="section-title">My Profile</h2>
 
-            <div class="max-w-md mx-auto mt-8">
-                <div class="paper-card p-8 text-center">
+            <div class="mt-8 max-w-4xl mx-auto">
+                <form id="profile-form" onsubmit="saveProfile(event)">
 
-                    <div class="leather-patch mx-auto mb-6">
-                        <img src="../assets/coffe-bean.svg" alt="Profile"
-                            onerror="this.style.display='none'; this.parentElement.innerHTML+='&lt;span style=\'font-size:40px; color:#5d4037\'&gt;👤&lt;/span&gt;'" />
-                    </div>
+                    
+                    <div class="flex flex-col items-center mb-12">
+                        <div
+                            class="w-40 h-40 flex items-center justify-center rounded-full overflow-hidden relative group mb-4">
+                            <img id="profile-avatar-img" src="../assets/coffe-bean.svg" alt="Profile"
+                                class="w-24 h-24 opacity-80" />
 
-                    <h3 id="profile-username" class="text-2xl font-bold text-[#4e342e] mb-2">Loading...</h3>
-                    <p id="profile-role" class="text-[#8c6a48] uppercase tracking-widest font-bold text-sm mb-8">...</p>
-
-                    <div class="text-left space-y-4">
-                        <div class="paper-row border-b border-[#eee]">
-                            <span class="font-bold text-[#5d4037] w-24">User ID:</span>
-                            <span id="profile-id" class="text-[#333]">...</span>
+                            
+                            <div class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                                onclick="document.getElementById('photo-input').click()">
+                                <span class="text-white font-bold text-sm">Change</span>
+                            </div>
                         </div>
-                        <div class="paper-row border-b border-[#eee]">
-                            <span class="font-bold text-[#5d4037] w-24">Status:</span>
-                            <span class="text-green-600 font-bold">Active</span>
+                        <input type="file" name="profile_photo" id="photo-input" class="hidden" accept="image/*"
+                            onchange="document.getElementById('save-btn').classList.remove('opacity-50'); document.getElementById('save-btn').disabled=false;" />
+
+                        <h2 id="display-fullname" class="text-2xl font-bold text-[#3e2723] mb-1">Loading...</h2>
+                        <p id="display-role" class="text-[#8d6e63] uppercase tracking-widest text-sm font-bold">...</p>
+                    </div>
+
+                    
+                    <div>
+                        <h3 class="text-xl font-bold text-[#4e342e] mb-6 border-b border-[#d7ccc8] pb-2">Edit Profile
+                        </h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                            <div>
+                                <label class="input-label block mb-2">Username</label>
+                                <input type="text" id="input-username"
+                                    class="skeuo-input-box w-full bg-[#f5f5f5] border-[#e0e0e0] text-[#757575] cursor-not-allowed"
+                                    readonly="readonly" />
+                            </div>
+                            <div>
+                                <label class="input-label block mb-2">Role</label>
+                                <input type="text" id="input-role"
+                                    class="skeuo-input-box w-full bg-[#f5f5f5] border-[#e0e0e0] text-[#757575] cursor-not-allowed"
+                                    readonly="readonly" />
+                            </div>
+                            <div>
+                                <label class="input-label block mb-2">Full Name</label>
+                                <input type="text" name="full_name" id="input-fullname" class="skeuo-input-box w-full"
+                                    placeholder="Enter full name" />
+                            </div>
+                            <div>
+                                <label class="input-label block mb-2">Phone Number</label>
+                                <input type="text" name="telp" id="input-phone" class="skeuo-input-box w-full"
+                                    placeholder="08..." />
+                            </div>
+                            <div>
+                                <label class="input-label block mb-2">Branch</label>
+                                <input type="text" id="input-branch"
+                                    class="skeuo-input-box w-full bg-[#f5f5f5] border-[#e0e0e0] text-[#757575] cursor-not-allowed"
+                                    readonly="readonly" />
+                            </div>
+                            <div>
+                                <label class="input-label block mb-2">User ID</label>
+                                <div id="display-id" class="text-xl font-bold text-[#3e2723] mt-2">#0</div>
+                            </div>
+                        </div>
+
+                        <div class="mt-12 flex justify-end items-center gap-6">
+                            <button type="button" onclick="alert('Feature coming soon!')"
+                                class="text-[#8c6a48] hover:text-[#5d4037] font-bold text-sm">Change Password</button>
+                            <button type="submit" id="save-btn" class="btn-skeuo w-auto px-8 py-2">Save Changes</button>
                         </div>
                     </div>
-
-                    <div class="mt-8">
-                        <button onclick="alert('Feature coming soon!')" class="btn-skeuo text-sm py-2">Change
-                            Password</button>
-                    </div>
-
-                </div>
+                </form>
             </div>
-
         </div>
     </div>
-
-    <script>
-        async function loadProfile() {
-            try {
-                const res = await fetch('../api/profile_api.php');
-                const user = await res.json();
-
-                if (user.error) {
-                    window.location.href = '../index.xhtml';
-                    return;
-                }
-
-                // Update Profile UI
-                document.getElementById('profile-username').textContent = user.username;
-                document.getElementById('profile-role').textContent = user.role;
-                document.getElementById('profile-id').textContent = '#' + user.id_user;
-
-                // Update Sidebar based on Role
-                const menu = document.getElementById('sidebar-menu');
-                const title = document.getElementById('sidebar-title');
-
-                let dashboardLink = '#';
-                if (user.role === 'corporate') {
-                    dashboardLink = 'corporate.xhtml';
-                    title.textContent = 'Brew. Corp';
-                } else if (user.role === 'manager') {
-                    dashboardLink = 'manager.xhtml';
-                    title.textContent = 'Brew. Manager';
-                }
-
-                menu.innerHTML = `
-                <li>
-                    <a href="#" class="active flex flex-col items-center justify-center text-center py-6 !p-0 !border-none hover:!bg-transparent">
-                        <img src="../assets/coffe-bean.svg" alt="Profile" class="w-16 h-16 rounded-full border-2 border-[#8c6a48] p-1 bg-[#f0e0c9] shadow-lg" />
-                        <span id="sidebar-username-static" class="font-bold text-[#d7ccc8] mt-4 text-base">Hello, User</span>
-                    </a>
-                </li>
-                <li><a href="${dashboardLink}">Dashboard</a></li>
-                <li class="push-bottom"><a href="../index.xhtml" class="text-red-400 hover:text-red-200">Logout</a></li>
-            `;
-
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', loadProfile);
-    </script>
 </body>
 
 </html>
