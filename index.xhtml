@@ -6,7 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>brew. login</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
     <link
@@ -20,13 +20,13 @@
 <body>
 
     
-    <div class="w-full stitched-header-footer py-5 relative">
+    <div class="stitched-header">
         <div class="stitch-line"></div>
         <div class="stitch-line mt-1"></div>
     </div>
 
     
-    <div class="flex-grow flex flex-col items-center justify-center p-4">
+    <div class="login-main">
 
         
         <div class="leather-patch">
@@ -36,16 +36,15 @@
         </div>
 
         
-        <h1 class="text-5xl font-bold etched-text mb-2 tracking-tight"><a href="index.xhtml"
-                class="no-underline text-[#3e2723] hover:text-[#8d6e63] transition-colors">brew.</a></h1>
-        <p class="etched-text-light mb-10 text-lg italic font-serif">Est. 2024</p>
+        <h1 class="login-brand"><a href="index.xhtml">brew.</a></h1>
+        <p class="brand-subtitle">Est. 2024</p>
 
         
-        <div class="w-full max-w-sm">
+        <div class="auth-card-container">
 
             
             <div id="login-view">
-                <form class="flex flex-col gap-6" action="api/login.php" method="POST">
+                <form class="auth-form" action="api/login.php" method="POST">
                     
                     <div class="paper-card">
                         <div class="paper-row">
@@ -61,37 +60,34 @@
                     </div>
 
                     
-                    <button type="submit" class="btn-skeuo shadow-lg">
+                    <button type="submit" class="btn-skeuo btn-submit">
                         Sign In
                     </button>
 
                     
-                    <div class="flex justify-between px-2 mt-2">
-                        <a href="#" onclick="toggleView('register')"
-                            class="text-[#8c6a48] text-xs font-bold uppercase tracking-wider hover:underline etched-text-light">Register</a>
-                        <a href="#"
-                            class="text-[#8c6a48] text-xs font-bold uppercase tracking-wider hover:underline etched-text-light">Need
-                            Help?</a>
+                    <div class="auth-links">
+                        <a href="#" onclick="toggleView('register')" class="auth-link">Register</a>
+                        <a href="#" class="auth-link">Need Help?</a>
                     </div>
                 </form>
             </div>
 
             
             <div id="register-view" class="hidden">
-                <form class="flex flex-col gap-6" action="api/register.php" method="POST" enctype="multipart/form-data">
+                <form class="auth-form" action="api/register.php" method="POST" enctype="multipart/form-data">
                     
                     <div class="paper-card no-line">
                         
                         <div class="paper-row">
                             <label class="input-label">Role</label>
-                            <div class="flex items-center gap-4 py-3">
-                                <label class="flex items-center gap-2 text-[#4e342e] font-serif cursor-pointer">
-                                    <input type="radio" name="role" value="manager" class="accent-[#8c6a48]"
+                            <div class="role-selector">
+                                <label class="role-option">
+                                    <input type="radio" name="role" value="manager" class="accent-brown"
                                         required="required" onchange="toggleBranchSelection()" checked="checked" />
                                     Manager
                                 </label>
-                                <label class="flex items-center gap-2 text-[#4e342e] font-serif cursor-pointer">
-                                    <input type="radio" name="role" value="corporate" class="accent-[#8c6a48]"
+                                <label class="role-option">
+                                    <input type="radio" name="role" value="corporate" class="accent-brown"
                                         required="required" onchange="toggleBranchSelection()" />
                                     Corporate
                                 </label>
@@ -112,7 +108,7 @@
 
                         <div class="paper-row">
                             <label class="input-label">Photo (Opt)</label>
-                            <input type="file" name="profile_photo" class="paper-input text-sm" accept="image/*" />
+                            <input type="file" name="profile_photo" class="paper-input file-input" accept="image/*" />
                         </div>
                         <div class="paper-row">
                             <label class="input-label">Password</label>
@@ -133,22 +129,20 @@
                         
                         <div class="paper-row" id="branch-row">
                             <label class="input-label">Branch</label>
-                            <select id="branch-select" name="branch" class="paper-input bg-transparent w-full">
+                            <select id="branch-select" name="branch" class="paper-input branch-select">
                                 <option value="">-- Select Branch --</option>
                             </select>
                         </div>
                     </div>
 
                     
-                    <button type="submit" class="btn-skeuo shadow-lg">
+                    <button type="submit" class="btn-skeuo btn-submit">
                         Register Account
                     </button>
 
                     
                     <div class="flex justify-center px-2 mt-2">
-                        <a href="#" onclick="toggleView('login')"
-                            class="text-[#8c6a48] text-xs font-bold uppercase tracking-wider hover:underline etched-text-light">Back
-                            to Sign In</a>
+                        <a href="#" onclick="toggleView('login')" class="auth-link">Back to Sign In</a>
                     </div>
                 </form>
             </div>
@@ -159,10 +153,10 @@
     </div>
 
     
-    <div class="w-full stitched-header-footer py-5 mt-auto relative text-center">
+    <div class="stitched-header mt-auto">
         <div class="stitch-line"></div>
         <div class="stitch-line mt-1 mb-3"></div>
-        <p class="text-[10px] etched-text opacity-60 uppercase tracking-widest font-bold">brew! corporation.</p>
+        <p class="etched-text footer-text">brew! corporation.</p>
     </div>
 
 </body>

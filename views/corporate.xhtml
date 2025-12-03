@@ -6,7 +6,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Corporate Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- <script src="https://cdn.tailwindcss.com"></script> -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="../js/corporate.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -23,8 +23,7 @@
     
     <div class="sidebar">
       <div class="sidebar-header">
-        <a href="corporate.xhtml"
-          class="text-2xl font-bold text-[#3e2723] no-underline hover:text-[#8d6e63] transition-colors">brew.</a>
+        <a href="corporate.xhtml" class="brand-logo">brew.</a>
       </div>
       <ul class="sidebar-menu">
         <li>
@@ -32,40 +31,40 @@
             <div class="profile-card">
               <img src="../assets/coffe-bean.svg" alt="Profile" class="profile-avatar-small" />
               <div class="profile-info">
-                <span id="sidebar-username" class="profile-name">Hello, User</span>
+                <span id="sidebar-username" class="profile-name">Hello, Corporate</span>
                 <span class="profile-role">Corporate</span>
               </div>
             </div>
           </a>
         </li>
         <li>
-          <a href="#" onclick="showTab('dashboard')" id="nav-dashboard" class="active flex items-center">
-            <img src="../assets/dashboard.svg" class="w-5 h-5 mr-2 inline-block opacity-70" alt="" />
+          <a href="#" onclick="showTab('dashboard')" id="nav-dashboard" class="active sidebar-link-content">
+            <img src="../assets/dashboard.svg" class="sidebar-icon" alt="" />
             Dashboard
           </a>
         </li>
         <li>
-          <a href="#" onclick="showTab('revenue')" id="nav-revenue" class="flex items-center">
-            <img src="../assets/revenue.svg" class="w-5 h-5 mr-2 inline-block opacity-70" alt="" />
-            Revenue History
+          <a href="#" onclick="showTab('revenue')" id="nav-revenue" class="sidebar-link-content">
+            <img src="../assets/revenue.svg" class="sidebar-icon" alt="" />
+            Revenue
           </a>
         </li>
         <li>
-          <a href="#" onclick="showTab('stock')" id="nav-stock" class="flex items-center">
-            <img src="../assets/stock.svg" class="w-5 h-5 mr-2 inline-block opacity-70" alt="" />
-            Stock History
+          <a href="#" onclick="showTab('stock')" id="nav-stock" class="sidebar-link-content">
+            <img src="../assets/stock.svg" class="sidebar-icon" alt="" />
+            Stock
           </a>
         </li>
         <li>
-          <a href="#" onclick="showTab('branches')" id="nav-branches" class="flex items-center">
-            <img src="../assets/branches.svg" class="w-5 h-5 mr-2 inline-block opacity-70" alt="" />
-            Manage Branches
+          <a href="#" onclick="showTab('branches')" id="nav-branches" class="sidebar-link-content">
+            <img src="../assets/branch.svg" class="sidebar-icon" alt="" />
+            Branches
           </a>
         </li>
 
         <li class="push-bottom">
-          <a href="../api/logout.php" class="text-red-400 hover:text-red-200 flex items-center">
-            <img src="../assets/logout.svg" class="w-5 h-5 mr-2 inline-block opacity-70" alt="" />
+          <a href="../api/logout.php" class="logout-link">
+            <img src="../assets/logout.svg" class="sidebar-icon" alt="" />
             Logout
           </a>
         </li>
@@ -77,37 +76,33 @@
 
       
       <div id="tab-dashboard">
-        <h2 class="section-title">Executive Overview</h2>
+        <h2 class="section-title">Dashboard Overview</h2>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        <div class="dashboard-grid">
           
-          <div class="paper-card p-4">
-            <h3 class="text-lg font-bold text-[#8c6a48] mb-4">7-Day Revenue Trend</h3>
+          <div class="paper-card chart-card">
+            <h3 class="card-title">Revenue Trends</h3>
             <canvas id="revenueChart"></canvas>
           </div>
 
           
-          <div class="paper-card p-4">
-            <h3 class="text-lg font-bold text-[#8c6a48] mb-4">Avg. Daily Stock Usage</h3>
+          <div class="paper-card chart-card">
+            <h3 class="card-title">Stock Usage</h3>
             <canvas id="stockChart"></canvas>
           </div>
-        </div>
-
-        <div class="paper-card p-4">
-          <h3 class="text-lg font-bold text-[#8c6a48] mb-4">Revenue by Branch (7 Days)</h3>
-          <canvas id="branchChart" height="100"></canvas>
         </div>
       </div>
 
       
       
       <div id="tab-revenue" class="hidden">
-        <div class="flex justify-between items-end mb-6">
-          <h2 class="section-title !mb-0">Revenue Reports</h2>
+        <h2 class="section-title">Revenue Reports</h2>
+        <div class="report-header">
+          <h3 class="card-title mb-0">History</h3>
 
           
-          <div class="flex gap-4 items-center">
-            <select id="rev-preset" class="skeuo-input-box" onchange="handlePresetChange('rev')">
+          <div class="report-controls">
+            <select id="rev-preset" class="skeuo-input-box filter-select" onchange="handlePresetChange('rev')">
               <option value="today">Today</option>
               <option value="yesterday">Yesterday</option>
               <option value="last7" selected="selected">Last 7 Days</option>
@@ -115,24 +110,20 @@
               <option value="custom">Custom Range</option>
             </select>
 
-            <div id="rev-custom-range" class="flex items-center gap-2 hidden">
-              <span class="text-xs font-bold text-[#5d4037]">From</span>
-              <input type="date" id="rev-start-date" class="skeuo-input-box" onchange="loadRevenue()" />
-              <span class="text-xs font-bold text-[#5d4037]">To</span>
-              <input type="date" id="rev-end-date" class="skeuo-input-box" onchange="loadRevenue()" />
+            <div id="rev-custom-range" class="date-range-group">
+              <span class="control-label">From</span>
+              <input type="date" id="rev-start-date" class="skeuo-input-box filter-select" onchange="loadRevenueHistory()" />
+              <span class="control-label">To</span>
+              <input type="date" id="rev-end-date" class="skeuo-input-box filter-select" onchange="loadRevenueHistory()" />
             </div>
-
-            <select id="rev-branch" class="skeuo-input-box" onchange="loadRevenue()">
-              <option value="">All Branches</option>
-            </select>
           </div>
         </div>
 
         
-        <div class="paper-card p-4 mb-4 bg-[#fff8e1] border-l-4 border-[#8c6a48]">
-          <div class="flex justify-between items-center">
-            <span class="text-[#5d4037] font-bold">Total Revenue (Selected Period)</span>
-            <span id="revenue-summary-total" class="text-2xl font-bold text-[#3e2723]">Rp 0</span>
+        <div class="paper-card summary-card">
+          <div class="summary-content">
+            <span class="summary-label">Total Revenue (Selected Period)</span>
+            <span id="revenue-summary-total" class="summary-value">Rp 0</span>
           </div>
         </div>
 
@@ -142,8 +133,7 @@
               <tr>
                 <th>Date</th>
                 <th>Branch</th>
-                <th>Reporter</th>
-                <th>Gross Revenue</th>
+                <th>Amount</th>
               </tr>
             </thead>
             <tbody id="revenue-table-body"></tbody>
@@ -154,12 +144,13 @@
       
       
       <div id="tab-stock" class="hidden">
-        <div class="flex justify-between items-end mb-6">
-          <h2 class="section-title !mb-0">Stock Reports</h2>
+        <h2 class="section-title">Stock Reports</h2>
+        <div class="report-header">
+          <h3 class="card-title mb-0">History</h3>
 
           
-          <div class="flex gap-4 items-center">
-            <select id="stock-preset" class="skeuo-input-box" onchange="handlePresetChange('stock')">
+          <div class="report-controls">
+            <select id="stock-preset" class="skeuo-input-box filter-select" onchange="handlePresetChange('stock')">
               <option value="today">Today</option>
               <option value="yesterday">Yesterday</option>
               <option value="last7" selected="selected">Last 7 Days</option>
@@ -167,42 +158,38 @@
               <option value="custom">Custom Range</option>
             </select>
 
-            <div id="stock-custom-range" class="flex items-center gap-2 hidden">
-              <span class="text-xs font-bold text-[#5d4037]">From</span>
-              <input type="date" id="stock-start-date" class="skeuo-input-box" onchange="loadStock()" />
-              <span class="text-xs font-bold text-[#5d4037]">To</span>
-              <input type="date" id="stock-end-date" class="skeuo-input-box" onchange="loadStock()" />
+            <div id="stock-custom-range" class="date-range-group">
+              <span class="control-label">From</span>
+              <input type="date" id="stock-start-date" class="skeuo-input-box filter-select" onchange="loadStockHistory()" />
+              <span class="control-label">To</span>
+              <input type="date" id="stock-end-date" class="skeuo-input-box filter-select" onchange="loadStockHistory()" />
             </div>
-
-            <select id="stock-branch" class="skeuo-input-box" onchange="loadStock()">
-              <option value="">All Branches</option>
-            </select>
           </div>
         </div>
 
         
-        <div class="paper-card p-4 mb-4">
-          <h4 class="text-[#8c6a48] font-bold mb-2 text-sm uppercase">Total Usage Summary</h4>
-          <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
-            <div class="p-2 bg-[#f5f5f5] rounded">
-              <div class="text-xs text-gray-500">Arabica</div>
-              <div id="sum-arabica" class="font-bold text-[#3e2723]">0 Kg</div>
+        <div class="paper-card report-summary-card">
+          <h4 class="card-title summary-title card-title-uppercase">Total Usage Summary</h4>
+          <div class="stock-grid">
+            <div class="stock-item">
+              <div class="stock-label">Arabica</div>
+              <div id="sum-arabica" class="stock-value">0 Kg</div>
             </div>
-            <div class="p-2 bg-[#f5f5f5] rounded">
-              <div class="text-xs text-gray-500">Robusta</div>
-              <div id="sum-robusta" class="font-bold text-[#3e2723]">0 Kg</div>
+            <div class="stock-item">
+              <div class="stock-label">Robusta</div>
+              <div id="sum-robusta" class="stock-value">0 Kg</div>
             </div>
-            <div class="p-2 bg-[#f5f5f5] rounded">
-              <div class="text-xs text-gray-500">Liberica</div>
-              <div id="sum-liberica" class="font-bold text-[#3e2723]">0 Kg</div>
+            <div class="stock-item">
+              <div class="stock-label">Liberica</div>
+              <div id="sum-liberica" class="stock-value">0 Kg</div>
             </div>
-            <div class="p-2 bg-[#f5f5f5] rounded">
-              <div class="text-xs text-gray-500">Decaf</div>
-              <div id="sum-decaf" class="font-bold text-[#3e2723]">0 Kg</div>
+            <div class="stock-item">
+              <div class="stock-label">Decaf</div>
+              <div id="sum-decaf" class="stock-value">0 Kg</div>
             </div>
-            <div class="p-2 bg-[#f5f5f5] rounded">
-              <div class="text-xs text-gray-500">Milk</div>
-              <div id="sum-susu" class="font-bold text-[#3e2723]">0 L</div>
+            <div class="stock-item">
+              <div class="stock-label">Milk</div>
+              <div id="sum-susu" class="stock-value">0 L</div>
             </div>
           </div>
         </div>
@@ -230,17 +217,17 @@
         <h2 class="section-title">Branch Management</h2>
 
         <div class="paper-card mb-8 p-4">
-          <h3 class="text-lg font-bold text-[#8c6a48] mb-4">Add New Branch</h3>
-          <form onsubmit="addBranch(event)" class="flex flex-wrap gap-4 items-end">
-            <div class="flex-grow">
-              <label class="input-label block mb-1">Name</label>
-              <input type="text" name="nama" class="skeuo-input-box w-full" required="required" />
+          <h3 class="card-title">Add New Branch</h3>
+          <form onsubmit="addBranch(event)" class="form-row-flex">
+            <div class="form-group">
+              <label class="input-label block mb-1">Branch Name</label>
+              <input type="text" name="nama" class="skeuo-input-box input-full" required="required" />
             </div>
-            <div class="flex-grow-[2]">
+            <div class="form-group-2">
               <label class="input-label block mb-1">Address</label>
-              <input type="text" name="alamat" class="skeuo-input-box w-full" required="required" />
+              <input type="text" name="alamat" class="skeuo-input-box input-full" required="required" />
             </div>
-            <button type="submit" class="btn-skeuo w-auto px-6 py-2 text-sm">Add</button>
+            <button type="submit" class="btn-skeuo btn-add-branch">Add</button>
           </form>
         </div>
 
@@ -263,25 +250,22 @@
   </div>
 
   
-  <div id="edit-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
-    <div class="paper-card p-6 w-full max-w-md relative">
-      <button onclick="closeEditModal()"
-        class="absolute top-2 right-2 text-[#8c6a48] font-bold text-xl">&times;</button>
-      <h2 class="text-xl font-bold text-[#4e342e] mb-4 border-b border-[#c0a080] pb-2">Edit Record</h2>
+  <div id="edit-modal" class="modal-overlay">
+    <div class="paper-card modal-content">
+      <button onclick="closeEditModal()" class="modal-close">&times;</button>
+      <h2 class="modal-title">Edit Record</h2>
 
       <form id="edit-form" onsubmit="submitEdit(event)">
         <input type="hidden" name="id" id="edit-id" />
         <input type="hidden" name="type" id="edit-type" />
 
-        <div id="edit-fields" class="space-y-4">
+        <div id="edit-fields" class="form-grid-3 form-grid-single">
           
         </div>
 
-        <div class="mt-6 flex justify-end gap-2">
-          <button type="button" onclick="closeEditModal()"
-            class="px-4 py-2 rounded border border-[#c0a080] text-[#8c6a48] font-bold hover:bg-[#f0e0c9]">Cancel</button>
-          <button type="submit"
-            class="px-4 py-2 rounded bg-[#8c6a48] text-white font-bold shadow hover:bg-[#5d4037]">Save Changes</button>
+        <div class="modal-actions">
+          <button type="button" onclick="closeEditModal()" class="btn-cancel">Cancel</button>
+          <button type="submit" class="btn-save">Save Changes</button>
         </div>
       </form>
     </div>
