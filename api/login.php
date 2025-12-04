@@ -12,18 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die("empty username or password.");
     }
 
-    // Admin Login
-    if ($username === 'admin' && $password === 'admin123') {
-        session_start();
-        $_SESSION['username'] = 'admin';
-        $_SESSION['role'] = 'admin';
-        $_SESSION['user_id'] = 0; // ID dummy
-        header("Location: ../views/admin.xhtml");
-        exit();
-    }
-
-    // Siapkan statement SQL untuk mengambil role user dan hash password
-    $stmt = $conn->prepare("SELECT role, password FROM users WHERE username=?");
+    $stmt = $conn->prepare("SELECT role, password, id_user FROM users WHERE username=?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -42,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         session_start();
         $_SESSION['username'] = $username;
         $_SESSION['role'] = $role;
+        $_SESSION['id_user']  = $row['id_user'];
 
         // Redirect berdasarkan role user
         if ($role === 'corporate') {
