@@ -39,6 +39,22 @@ switch ($action) {
         addBranch($conn);
         break;
 
+    case 'update_branch':
+        updateBranch($conn);
+        break;
+
+    case 'delete_branch':
+        deleteBranch($conn);
+        break;
+
+    case 'update_omzet':
+        updateOmzet($conn);
+        break;
+
+    case 'update_stock':
+        updateStock($conn);
+        break;
+
     default:
         echo json_encode(['error' => 'Invalid action']);
         break;
@@ -223,6 +239,67 @@ function addBranch($conn) {
 
     $stmt = $conn->prepare("INSERT INTO branch (nama, alamat) VALUES (?, ?)");
     $stmt->bind_param("ss", $nama, $alamat);
+
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true]);
+    } else {
+        echo json_encode(['success' => false, 'error' => $conn->error]);
+    }
+}
+
+function updateBranch($conn) {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $id = $data['id']; // corporate.js sends 'id'
+    $nama = $data['nama'];
+    $alamat = $data['alamat'];
+
+    $stmt = $conn->prepare("UPDATE branch SET nama = ?, alamat = ? WHERE id_branch = ?");
+    $stmt->bind_param("ssi", $nama, $alamat, $id);
+
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true]);
+    } else {
+        echo json_encode(['success' => false, 'error' => $conn->error]);
+    }
+}
+
+function deleteBranch($conn) {
+    $id = $_POST['id'];
+    $stmt = $conn->prepare("DELETE FROM branch WHERE id_branch = ?");
+    $stmt->bind_param("i", $id);
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true]);
+    } else {
+        echo json_encode(['success' => false, 'error' => $conn->error]);
+    }
+}
+
+function updateOmzet($conn) {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $id = $data['id']; // corporate.js sends 'id'
+    $omzet = $data['omzet'];
+
+    $stmt = $conn->prepare("UPDATE omzet SET omzet = ? WHERE id_laporan = ?");
+    $stmt->bind_param("di", $omzet, $id);
+
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true]);
+    } else {
+        echo json_encode(['success' => false, 'error' => $conn->error]);
+    }
+}
+
+function updateStock($conn) {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $id = $data['id']; // corporate.js sends 'id'
+    $arabica = $data['arabica'];
+    $robusta = $data['robusta'];
+    $liberica = $data['liberica'];
+    $decaf = $data['decaf'];
+    $susu = $data['susu'];
+
+    $stmt = $conn->prepare("UPDATE pemakaian SET arabica = ?, robusta = ?, liberica = ?, decaf = ?, susu = ? WHERE id_laporan = ?");
+    $stmt->bind_param("dddddi", $arabica, $robusta, $liberica, $decaf, $susu, $id);
 
     if ($stmt->execute()) {
         echo json_encode(['success' => true]);

@@ -13,7 +13,6 @@ function showTab(tabId) {
 }
 
 // API Helper
-// API Helper
 async function api(action, method = 'GET', data = null) {
     const options = { method };
     
