@@ -5,11 +5,11 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>brew. login</title>
     <script type="text/javascript" src="https://cdn.tailwindcss.com" ></script>
-    <script type="text/javascript" src="js/index.js?v=1"></script>
+    <script type="text/javascript" src="js/index.js?v=3"></script>
     <link rel="stylesheet" href="css/style.css" />
 </head>
 
-<body>
+<body class="overflow-y-auto">
     <div class="flex-grow flex flex-col items-center justify-center">
         <div class="leather-patch">
             <img src="assets/coffe-bean.svg" alt="Coffee Bean Logo"/>
@@ -20,7 +20,7 @@
         <div class="w-full max-w-sm">
 <!--            Login Form -->
             <div id="login-view">
-                <form class="flex flex-col gap-6" action="api/login.php" method="POST" enctype="multipart/form-data">
+                <form id="login-form" class="flex flex-col gap-6" action="api/login.php" method="POST" enctype="multipart/form-data" onsubmit="return handleLogin(event)">
                     <div class="paper-card">
                         <div class="paper-row">
                             <label class="input-label">User ID</label>
@@ -43,7 +43,7 @@
             </div>
 <!--            Register Form -->
             <div id="register-view" class="hidden">
-                <form id="register-form" class="flex flex-col gap-6" action="api/register.php" method="POST" enctype="multipart/form-data">
+                <form id="register-form" class="flex flex-col gap-6" action="api/register.php" method="POST" enctype="multipart/form-data" onsubmit="return handleRegister(event)">
                     <div class="paper-card no-line">
                         <div class="paper-row">
                             <label class="input-label">Role</label>

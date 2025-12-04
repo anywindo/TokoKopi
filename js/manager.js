@@ -78,7 +78,10 @@ async function loadHistory() {
                 <td>${row.id_laporan}</td>
                 <td>${row.tanggal}</td>
                 <td>Rp ${parseInt(row.omzet).toLocaleString()}</td>
-                <td><button onclick="deleteReport('revenue', ${row.id_laporan})" class="action-btn btn-delete">Delete</button></td>
+                <td>
+                    <button onclick="openEditRevenueModal('${encodeURIComponent(JSON.stringify(row))}')" class="action-btn btn-edit">Edit</button>
+                    <button onclick="deleteReport('revenue', ${row.id_laporan})" class="action-btn btn-delete">Delete</button>
+                </td>
             </tr>`;
     });
     document.getElementById('revenue-summary-total').textContent = 'Rp ' + totalOmzet.toLocaleString();
@@ -102,7 +105,10 @@ async function loadHistory() {
                 <td>${row.liberica}</td>
                 <td>${row.decaf}</td>
                 <td>${row.susu}</td>
-                <td><button onclick="deleteReport('stock', ${row.id_laporan})" class="action-btn btn-delete">Delete</button></td>
+                <td>
+                    <button onclick="openEditStockModal('${encodeURIComponent(JSON.stringify(row))}')" class="action-btn btn-edit">Edit</button>
+                    <button onclick="deleteReport('stock', ${row.id_laporan})" class="action-btn btn-delete">Delete</button>
+                </td>
             </tr>`;
     });
     document.getElementById('sum-arabica').textContent = totals.arabica.toFixed(1) + ' Kg';
@@ -145,7 +151,64 @@ async function deleteReport(type, id) {
     formData.append('type', type);
     formData.append('id', id);
     await fetch(`${API_BASE}?action=delete_report`, { method: 'POST', body: formData });
+    await fetch(`${API_BASE}?action=delete_report`, { method: 'POST', body: formData });
     loadHistory();
+}
+
+// Edit Revenue Logic
+function openEditRevenueModal(rowJson) {
+    const row = JSON.parse(decodeURIComponent(rowJson));
+    document.getElementById('edit-rev-id').value = row.id_laporan;
+    document.getElementById('edit-rev-date').value = row.tanggal;
+    document.getElementById('edit-rev-omzet').value = row.omzet;
+    document.getElementById('edit-revenue-modal').classList.remove('hidden');
+}
+
+function closeEditRevenueModal() {
+    document.getElementById('edit-revenue-modal').classList.add('hidden');
+}
+
+async function updateRevenue(e) {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+    const res = await api('update_revenue', 'POST', data);
+    if (res.success) {
+        closeEditRevenueModal();
+        loadHistory();
+    } else {
+        alert('Error: ' + res.error);
+    }
+}
+
+// Edit Stock Logic
+function openEditStockModal(rowJson) {
+    const row = JSON.parse(decodeURIComponent(rowJson));
+    document.getElementById('edit-stock-id').value = row.id_laporan;
+    document.getElementById('edit-stock-date').value = row.tanggal;
+    document.getElementById('edit-stock-arabica').value = row.arabica;
+    document.getElementById('edit-stock-robusta').value = row.robusta;
+    document.getElementById('edit-stock-liberica').value = row.liberica;
+    document.getElementById('edit-stock-decaf').value = row.decaf;
+    document.getElementById('edit-stock-susu').value = row.susu;
+    document.getElementById('edit-stock-modal').classList.remove('hidden');
+}
+
+function closeEditStockModal() {
+    document.getElementById('edit-stock-modal').classList.add('hidden');
+}
+
+async function updateStock(e) {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+    const res = await api('update_stock', 'POST', data);
+    if (res.success) {
+        closeEditStockModal();
+        loadHistory();
+    } else {
+        alert('Error: ' + res.error);
+    }
 }
 
 // Inisialisasi

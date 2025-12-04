@@ -40,6 +40,12 @@ switch ($action) {
     case 'delete_report':
         deleteReport($conn, $my_branch_id);
         break;
+    case 'update_revenue':
+        updateRevenue($conn, $my_branch_id);
+        break;
+    case 'update_stock':
+        updateStock($conn, $my_branch_id);
+        break;
     default:
         echo json_encode(['error' => 'Invalid action']);
         break;
@@ -158,6 +164,42 @@ function deleteReport($conn, $branch_id) {
     
     $stmt->bind_param("ii", $id, $branch_id);
     
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true]);
+    } else {
+        echo json_encode(['success' => false, 'error' => $conn->error]);
+    }
+}
+
+function updateRevenue($conn, $branch_id) {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $id = $data['id_laporan'];
+    $tanggal = $data['tanggal'];
+    $omzet = $data['omzet'];
+
+    $stmt = $conn->prepare("UPDATE omzet SET tanggal = ?, omzet = ? WHERE id_laporan = ? AND id_branch = ?");
+    $stmt->bind_param("sdii", $tanggal, $omzet, $id, $branch_id);
+
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true]);
+    } else {
+        echo json_encode(['success' => false, 'error' => $conn->error]);
+    }
+}
+
+function updateStock($conn, $branch_id) {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $id = $data['id_laporan'];
+    $tanggal = $data['tanggal'];
+    $arabica = $data['arabica'];
+    $robusta = $data['robusta'];
+    $liberica = $data['liberica'];
+    $decaf = $data['decaf'];
+    $susu = $data['susu'];
+
+    $stmt = $conn->prepare("UPDATE pemakaian SET tanggal = ?, arabica = ?, robusta = ?, liberica = ?, decaf = ?, susu = ? WHERE id_laporan = ? AND id_branch = ?");
+    $stmt->bind_param("sdddddii", $tanggal, $arabica, $robusta, $liberica, $decaf, $susu, $id, $branch_id);
+
     if ($stmt->execute()) {
         echo json_encode(['success' => true]);
     } else {
