@@ -1,86 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="id" lang="id">
-
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="EN" lang="EN">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Selamat Datang di brew.</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Baskervville:ital@0;1&amp;family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&amp;display=swap"
-        rel="stylesheet" />
-
-    <!-- Custom Styles -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>brew. login</title>
+    <script type="text/javascript" src="https://cdn.tailwindcss.com" ></script>
+    <script type="text/javascript" src="js/index.js?v=1"></script>
     <link rel="stylesheet" href="css/style.css" />
 </head>
 
 <body>
-
-    <!-- Top Decoration -->
-    <div class="w-full stitched-header-footer py-5 relative">
-        <div class="stitch-line"></div>
-        <div class="stitch-line mt-1"></div>
-    </div>
-
-    <!-- Main Content -->
-    <div class="flex-grow flex flex-col items-center justify-center p-4">
-
-        <!-- App Icon / Patch with Rivets -->
+    <div class="flex-grow flex flex-col items-center justify-center">
         <div class="leather-patch">
-            <!-- SVG Asset Placeholder -->
-            <img src="assets/coffe-bean.svg" alt="Coffee Bean Logo"
-                onerror="this.style.display='none'; this.parentElement.innerHTML+='&lt;span style=\'font-size:40px; color:#5d4037\'&gt;☕&lt;/span&gt;'" />
+            <img src="assets/coffe-bean.svg" alt="Coffee Bean Logo"/>
         </div>
 
-        <!-- Title -->
-        <h1 class="text-5xl font-bold etched-text mb-2 tracking-tight">Brew.</h1>
-        <p class="etched-text-light mb-10 text-lg italic font-serif">Est. 2024</p>
-
-        <!-- Login Card -->
+        <h1 class="text-5xl font-bold mb-10">brew.</h1>
+        
         <div class="w-full max-w-sm">
-
-            <!-- LOGIN VIEW -->
+<!--            Login Form -->
             <div id="login-view">
-                <form class="flex flex-col gap-6" action="api/login.php" method="POST">
-                    <!-- The "Paper" Block -->
+                <form class="flex flex-col gap-6" action="api/login.php" method="POST" enctype="multipart/form-data">
                     <div class="paper-card">
                         <div class="paper-row">
                             <label class="input-label">User ID</label>
-                            <input type="text" name="username" class="paper-input" placeholder="brewManJogja"
-                                required="required" />
+                            <input type="text" name="username" class="paper-input" required="required" />
                         </div>
                         <div class="paper-row">
                             <label class="input-label">Password</label>
-                            <input type="password" name="password" class="paper-input" placeholder="Required"
-                                required="required" />
+                            <input type="password" name="password" class="paper-input" required="required" />
                         </div>
                     </div>
 
-                    <!-- Skeuomorphic Button -->
-                    <button type="submit" class="btn-skeuo shadow-lg">
+                    <button type="submit" class="btn-skeuo">
                         Sign In
                     </button>
 
-                    <!-- Footer Links -->
                     <div class="flex justify-between px-2 mt-2">
-                        <a href="#" onclick="toggleView('register')"
-                            class="text-[#8c6a48] text-xs font-bold uppercase tracking-wider hover:underline etched-text-light">Register</a>
-                        <a href="#"
-                            class="text-[#8c6a48] text-xs font-bold uppercase tracking-wider hover:underline etched-text-light">Need
-                            Help?</a>
+                        <a href="#" onclick="toggleView('register')" class="text-xs font-bold hover:underline">REGISTER</a>
                     </div>
                 </form>
             </div>
-
-            <!-- REGISTER VIEW -->
+<!--            Register Form -->
             <div id="register-view" class="hidden">
-                <form class="flex flex-col gap-6" action="api/register.php" method="POST">
-                    <!-- The "Paper" Block -->
+                <form id="register-form" class="flex flex-col gap-6" action="api/register.php" method="POST" enctype="multipart/form-data">
                     <div class="paper-card no-line">
-                        <!-- Role Selection (Moved to Top) -->
                         <div class="paper-row">
                             <label class="input-label">Role</label>
                             <div class="flex items-center gap-4 py-3">
@@ -98,59 +62,56 @@
                         </div>
 
                         <div class="paper-row">
+                            <label class="input-label">Full Name</label>
+                            <input type="text" name="full_name" class="paper-input" required="required" />
+                        </div>
+
+                        <div class="paper-row">
                             <label class="input-label">Username</label>
-                            <input type="text" name="username" class="paper-input" placeholder="New User"
-                                required="required" />
+                            <input type="text" name="username" class="paper-input" required="required" />
+                        </div>
+
+                        <div class="paper-row">
+                            <label class="input-label">Photo</label>
+                            <input type="file" name="profile_photo" class="paper-input text-sm" accept="image/*" />
                         </div>
                         <div class="paper-row">
                             <label class="input-label">Password</label>
-                            <input type="password" name="password" class="paper-input" placeholder="Secret"
-                                required="required" />
+                            <input type="password" name="password" class="paper-input" required="required" />
                         </div>
                         <div class="paper-row">
                             <label class="input-label">Repeat</label>
-                            <input type="password" name="password2" class="paper-input" placeholder="Confirm"
-                                required="required" />
+                            <input type="password" name="password2" class="paper-input" required="required" />
                         </div>
                         <div class="paper-row">
                             <label class="input-label">Phone</label>
-                            <input type="text" name="phone" class="paper-input" placeholder="0812..."
-                                required="required" />
+                            <input type="text" name="phone" class="paper-input" required="required" />
                         </div>
-
-                        <!-- Branch Selection (Toggleable) -->
+                        
                         <div class="paper-row" id="branch-row">
                             <label class="input-label">Branch</label>
-                            <select id="branch-select" name="branch" class="paper-input bg-transparent w-full">
-                                <option value="">-- Select Branch --</option>
+                            <select id="branch-select" name="branch" class="paper-input">
+                                <option value="">Select Branch</option>
                             </select>
                         </div>
                     </div>
 
-                    <!-- Skeuomorphic Button -->
-                    <button type="submit" class="btn-skeuo shadow-lg">
+                    <button type="submit" class="btn-skeuo">
                         Register Account
                     </button>
 
-                    <!-- Footer Links -->
                     <div class="flex justify-center px-2 mt-2">
                         <a href="#" onclick="toggleView('login')"
-                            class="text-[#8c6a48] text-xs font-bold uppercase tracking-wider hover:underline etched-text-light">Back
-                            to Sign In</a>
+                            class="text-xs font-bold hover:underline">BACK TO LOGIN</a>
                     </div>
                 </form>
             </div>
-
-            <script src="js/index.js"></script>
-
         </div>
     </div>
 
-    <!-- Bottom Decoration -->
-    <div class="w-full stitched-header-footer py-5 mt-auto relative text-center">
-        <div class="stitch-line"></div>
-        <div class="stitch-line mt-1 mb-3"></div>
-        <p class="text-[10px] etched-text opacity-60 uppercase tracking-widest font-bold">brew! corporation.</p>
+<!--    Footer-->
+    <div class="py-5 text-center">
+        <p class="text-[12px] opacity-60 font-bold">brew! corporation.</p>
     </div>
 
 </body>

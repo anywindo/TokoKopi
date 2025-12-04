@@ -4,7 +4,7 @@ session_start();
 
 header('Content-Type: application/json');
 
-// AUTH
+// Pastikan user memiliki otorisasi sebagai corporate
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'corporate') {
     echo json_encode(['error' => 'Unauthorized']);
     exit();
@@ -12,6 +12,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'corporate') {
 
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 
+// Tangani aksi yang berbeda berdasarkan parameter 'action'
 switch ($action) {
 
     case 'get_dashboard_data':
@@ -51,15 +52,10 @@ switch ($action) {
         break;
 }
 
-
-
-// ==========================
-// DASHBOARD
-// ==========================
+// Fungsi untuk mengambil data dashboard agregat (grafik, rata-rata)
 function getDashboardData($conn) {
     $data = [];
 
-    // CHART OMZET 7 HARI
     $sql = "SELECT tanggal, SUM(omzet) AS total 
             FROM omzet 
             WHERE tanggal >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
@@ -73,7 +69,6 @@ function getDashboardData($conn) {
     }
     $data['revenue_chart'] = $revenue;
 
-    // RATA-RATA PEMAKAIAN 7 HARI
     $sql = "SELECT 
                 AVG(arabica) AS arabica,
                 AVG(robusta) AS robusta,
@@ -85,7 +80,6 @@ function getDashboardData($conn) {
     $result = $conn->query($sql);
     $data['stock_avg'] = $result->fetch_assoc();
 
-    // TOTAL OMZET PER BRANCH
     $sql = "SELECT b.nama, SUM(o.omzet) AS total
             FROM omzet o
             JOIN branch b ON o.id_branch = b.id_branch
@@ -104,11 +98,11 @@ function getDashboardData($conn) {
 
 
 
-// ==========================
-// DETAIL OMZET
-// ==========================
+
+// Fungsi untuk mengambil riwayat pendapatan dengan filter opsional
 function getRevenueHistory($conn) {
-    $date = isset($_GET['date']) ? $_GET['date'] : '';
+    $start_date = isset($_GET['start_date']) ? $_GET['start_date'] : '';
+    $end_date = isset($_GET['end_date']) ? $_GET['end_date'] : '';
     $branch = isset($_GET['branch']) ? $_GET['branch'] : '';
 
     $sql = "SELECT 
@@ -122,8 +116,11 @@ function getRevenueHistory($conn) {
             LEFT JOIN branch b ON o.id_branch = b.id_branch
             WHERE 1=1";
 
-    if ($date !== '') {
-        $sql .= " AND o.tanggal = '" . $conn->real_escape_string($date) . "'";
+    if ($start_date !== '') {
+        $sql .= " AND o.tanggal >= '" . $conn->real_escape_string($start_date) . "'";
+    }
+    if ($end_date !== '') {
+        $sql .= " AND o.tanggal <= '" . $conn->real_escape_string($end_date) . "'";
     }
 
     if ($branch !== '') {
@@ -135,8 +132,10 @@ function getRevenueHistory($conn) {
     $result = $conn->query($sql);
     $rows = [];
 
-    while ($row = $result->fetch_assoc()) {
-        $rows[] = $row;
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $rows[] = $row;
+        }
     }
 
     echo json_encode($rows);
@@ -166,13 +165,10 @@ function getAllOmzet($conn) {
     echo json_encode($rows);
 }
 
-
-
-// ==========================
-// DETAIL PEMAKAIAN
-// ==========================
+// Fungsi untuk mengambil riwayat penggunaan stok dengan filter opsional
 function getStockHistory($conn) {
-    $date = isset($_GET['date']) ? $_GET['date'] : '';
+    $start_date = isset($_GET['start_date']) ? $_GET['start_date'] : '';
+    $end_date = isset($_GET['end_date']) ? $_GET['end_date'] : '';
     $branch = isset($_GET['branch']) ? $_GET['branch'] : '';
 
     $sql = "SELECT 
@@ -184,8 +180,11 @@ function getStockHistory($conn) {
             LEFT JOIN users u ON p.id_pelapor = u.id_user
             WHERE 1=1";
 
-    if ($date !== '') {
-        $sql .= " AND p.tanggal = '" . $conn->real_escape_string($date) . "'";
+    if ($start_date !== '') {
+        $sql .= " AND p.tanggal >= '" . $conn->real_escape_string($start_date) . "'";
+    }
+    if ($end_date !== '') {
+        $sql .= " AND p.tanggal <= '" . $conn->real_escape_string($end_date) . "'";
     }
 
     if ($branch !== '') {
@@ -197,18 +196,16 @@ function getStockHistory($conn) {
     $result = $conn->query($sql);
     $rows = [];
 
-    while ($row = $result->fetch_assoc()) {
-        $rows[] = $row;
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $rows[] = $row;
+        }
     }
 
     echo json_encode($rows);
 }
 
-
-
-// ==========================
-// BRANCH
-// ==========================
+// Fungsi untuk mengambil semua cabang
 function getBranches($conn) {
     $res = $conn->query("SELECT * FROM branch ORDER BY id_branch ASC");
 
@@ -220,9 +217,7 @@ function getBranches($conn) {
     echo json_encode($rows);
 }
 
-
-
-// ADD BRANCH
+// Fungsi untuk menambahkan cabang baru
 function addBranch($conn) {
     $data = json_decode(file_get_contents('php://input'), true);
 

@@ -1,6 +1,7 @@
 <?php
 include 'koneksi.php';
 
+// Ambil semua nama cabang untuk pilihan dropdown
 $sql = "SELECT nama FROM branch";
 $result = $conn->query($sql);
 

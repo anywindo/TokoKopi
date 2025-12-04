@@ -1,6 +1,7 @@
 <?php
 include 'koneksi.php'; 
 
+// Periksa apakah metode request adalah POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
@@ -18,20 +19,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($result->num_rows === 0) {
         die("no user with this username.");
     }else{
-        $row = $result->fetch_assoc(); // fetch the row once
+        $row = $result->fetch_assoc();
         $actualPassword = $row['password'];
         $role = $row['role'];
     }
     $stmt->close();
 
+    // Verifikasi password yang dikirim dengan hash yang tersimpan
     if (password_verify($password, $actualPassword)) {
+        // Mulai sesi dan simpan data user
         session_start();
         $_SESSION['username'] = $username;
         $_SESSION['role'] = $role;
         $_SESSION['id_user']  = $row['id_user'];
 
+        // Redirect berdasarkan role user
         if ($role === 'corporate') {
             header("Location: ../views/corporate.xhtml");
+        } else if ($role === 'admin') {
+            header("Location: ../views/admin.xhtml");
         } else { 
             header("Location: ../views/manager.xhtml");
         }

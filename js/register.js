@@ -1,3 +1,4 @@
+// Inisialisasi
 window.addEventListener('DOMContentLoaded', function () {
     fetch('../api/get_branches.php')
         .then(response => response.json())
