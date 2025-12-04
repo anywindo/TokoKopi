@@ -4,11 +4,13 @@ session_start();
 
 header('Content-Type: application/json');
 
+// Pastikan user memiliki otorisasi sebagai manager
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'manager') {
     echo json_encode(['error' => 'Unauthorized']);
     exit();
 }
 
+// Ambil ID cabang yang ditugaskan ke manager
 $username = $_SESSION['username'];
 $stmt = $conn->prepare("SELECT id_branch, id_user FROM users WHERE username = ?");
 $stmt->bind_param("s", $username);
@@ -24,6 +26,7 @@ if (!$my_branch_id) {
 
 $action = $_GET['action'] ?? '';
 
+// Tangani aksi yang berbeda berdasarkan parameter 'action'
 switch ($action) {
     case 'get_history':
         getHistory($conn, $my_branch_id);
@@ -42,6 +45,7 @@ switch ($action) {
         break;
 }
 
+// Fungsi untuk mengambil riwayat pendapatan dan stok cabang
 function getHistory($conn, $branch_id) {
     $data = [];
     
@@ -106,6 +110,7 @@ function getHistory($conn, $branch_id) {
     echo json_encode($data);
 }
 
+// Fungsi untuk menambahkan laporan pendapatan baru
 function addRevenue($conn, $branch_id, $user_id) {
     $data = json_decode(file_get_contents('php://input'), true);
     $tanggal = $data['tanggal'];
@@ -121,6 +126,7 @@ function addRevenue($conn, $branch_id, $user_id) {
     }
 }
 
+// Fungsi untuk menambahkan laporan penggunaan stok baru
 function addStock($conn, $branch_id, $user_id) {
     $data = json_decode(file_get_contents('php://input'), true);
     $tanggal = $data['tanggal'];

@@ -4,6 +4,7 @@ session_start();
 
 header('Content-Type: application/json');
 
+// Pastikan user memiliki otorisasi sebagai corporate
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'corporate') {
     echo json_encode(['error' => 'Unauthorized']);
     exit();
@@ -11,6 +12,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'corporate') {
 
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 
+// Tangani aksi yang berbeda berdasarkan parameter 'action'
 switch ($action) {
 
     case 'get_dashboard_data':
@@ -42,6 +44,7 @@ switch ($action) {
         break;
 }
 
+// Fungsi untuk mengambil data dashboard agregat (grafik, rata-rata)
 function getDashboardData($conn) {
     $data = [];
 
@@ -88,6 +91,7 @@ function getDashboardData($conn) {
 
 
 
+// Fungsi untuk mengambil riwayat pendapatan dengan filter opsional
 function getRevenueHistory($conn) {
     $start_date = isset($_GET['start_date']) ? $_GET['start_date'] : '';
     $end_date = isset($_GET['end_date']) ? $_GET['end_date'] : '';
@@ -153,6 +157,7 @@ function getAllOmzet($conn) {
     echo json_encode($rows);
 }
 
+// Fungsi untuk mengambil riwayat penggunaan stok dengan filter opsional
 function getStockHistory($conn) {
     $start_date = isset($_GET['start_date']) ? $_GET['start_date'] : '';
     $end_date = isset($_GET['end_date']) ? $_GET['end_date'] : '';
@@ -192,6 +197,7 @@ function getStockHistory($conn) {
     echo json_encode($rows);
 }
 
+// Fungsi untuk mengambil semua cabang
 function getBranches($conn) {
     $res = $conn->query("SELECT * FROM branch ORDER BY id_branch ASC");
 
@@ -203,6 +209,7 @@ function getBranches($conn) {
     echo json_encode($rows);
 }
 
+// Fungsi untuk menambahkan cabang baru
 function addBranch($conn) {
     $data = json_decode(file_get_contents('php://input'), true);
 

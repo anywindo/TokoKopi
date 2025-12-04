@@ -18,6 +18,7 @@ try {
         throw new Exception("Database connection failed: " . mysqli_connect_error());
     }
 
+    // Pastikan user sudah login
     if (!isset($_SESSION['role'])) {
         ob_clean();
         echo json_encode(['error' => 'Not logged in']);
@@ -27,6 +28,7 @@ try {
     $username = $_SESSION['username'] ?? '';
     $user_id = $_SESSION['user_id'] ?? 0;
 
+    // Tangani request update profil
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $full_name = trim($_POST['full_name'] ?? '');
         $telp = trim($_POST['telp'] ?? '');
@@ -35,6 +37,7 @@ try {
         $params = [$full_name, $telp];
         $types = "ss";
 
+        // Tangani upload foto profil
         if (isset($_FILES['profile_photo']) && $_FILES['profile_photo']['error'] === UPLOAD_ERR_OK) {
             $uploadDir = '../uploads/profiles/';
             if (!is_dir($uploadDir)) {
@@ -87,6 +90,7 @@ try {
     $profile_photo = '';
     $telp = '';
 
+    // Ambil data profil user saat ini
     if ($username) {
         $stmt = $conn->prepare("SELECT u.full_name, u.profile_photo, u.telp, b.nama as branch_name FROM users u LEFT JOIN branch b ON u.id_branch = b.id_branch WHERE u.username = ?");
         if (!$stmt) {

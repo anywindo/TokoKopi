@@ -1,262 +1,252 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
-
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="EN" lang="EN">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Manager Dashboard - Brew.</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="../js/manager.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Baskervville:ital@0;1&amp;family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&amp;display=swap"
-    rel="stylesheet" />
-  <link rel="stylesheet" href="../css/style.css" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manager Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../js/manager.js"></script>
+
+    <link rel="stylesheet" href="../css/style.css" />
 </head>
 
 <body>
 
-  <div class="dashboard-container">
+    <div class="dashboard-container">
     
-    <div class="sidebar">
-      <div class="sidebar-header">
-        <a href="manager.xhtml"
-          class="text-2xl font-bold text-[#3e2723] no-underline hover:text-[#8d6e63] transition-colors">brew.</a>
-      </div>
-      <ul class="sidebar-menu">
-        <li>
-          <a href="profile.xhtml" class="profile-card-link">
-            <div class="profile-card">
-              <img src="../assets/coffe-bean.svg" alt="Profile" class="profile-avatar-small" />
-              <div class="profile-info">
-                <span id="sidebar-username" class="profile-name">Hello, User</span>
-                <span class="profile-role">Manager</span>
-              </div>
+<!--    Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <a href="manager.xhtml" class="text-2xl font-bold no-underline hover:text-[#8d6e63] transition-colors">brew.</a>
             </div>
-          </a>
-        </li>
-        <li>
-          <a href="#" onclick="showTab('revenue')" id="nav-revenue" class="active flex items-center">
-            <img src="../assets/revenue.svg" class="w-5 h-5 mr-2 inline-block opacity-70" alt="" />
-            Revenue Reports
-          </a>
-        </li>
-        <li>
-          <a href="#" onclick="showTab('stock')" id="nav-stock" class="flex items-center">
-            <img src="../assets/stock.svg" class="w-5 h-5 mr-2 inline-block opacity-70" alt="" />
-            Stock Reports
-          </a>
-        </li>
 
-        <li class="push-bottom">
-          <a href="../api/logout.php" class="text-red-400 hover:text-red-200 flex items-center">
-            <img src="../assets/logout.svg" class="w-5 h-5 mr-2 inline-block opacity-70" alt="" />
-            Logout
-          </a>
-        </li>
-      </ul>
+<!--        Sidebar List Items -->
+            <ul class="sidebar-menu">
+
+<!--            List 0: Profile card -->
+                <li>
+                    <a href="profile.xhtml" class="profile-card-link">
+                        <div class="profile-card">
+                            <img src="../assets/coffe-bean.svg" alt="Profile" class="profile-avatar-small" />
+                            <div class="profile-info">
+                                <span id="sidebar-username" class="profile-name">Hello, User</span>
+                                <span class="profile-role">Manager</span>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+
+<!--            List 1: Revenue Reports -->
+                <li>
+                    <a href="#" onclick="showTab('revenue')" id="nav-revenue" class="active flex items-center">
+                        <img src="../assets/revenue.svg" class="w-5 h-5 mr-2 inline-block opacity-70" alt="" />
+                        Revenue Reports
+                    </a>
+                </li>
+
+<!--            List 2: Stock Reports -->
+                <li>
+                    <a href="#" onclick="showTab('stock')" id="nav-stock" class="flex items-center">
+                        <img src="../assets/stock.svg" class="w-5 h-5 mr-2 inline-block opacity-70" alt="" />
+                        Stock Reports
+                    </a>
+                </li>
+
+<!--            List 3: Logout -->
+                <li class="push-bottom">
+                    <a href="../api/logout.php" class="text-red-400 hover:text-red-200 flex items-center">
+                        <img src="../assets/logout.svg" class="w-5 h-5 mr-2 inline-block opacity-70" alt="" />
+                        Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+<!--    Main Content -->
+        <div class="main-content">
+
+<!--        Revenue Tab -->
+            <div id="tab-revenue">
+                <h2 class="section-title">Daily Revenue Reporting</h2>
+                <h3 id="rev-branch-name" class="text-xl font-bold text-[#8c6a48] mb-6 border-b-2 border-[#8c6a48] inline-block pb-1"></h3>
+
+<!--            Submit New Report -->
+                <div class="paper-card mb-8 p-4">
+                    <h3 class="text-lg font-bold text-[#8c6a48] mb-4">Submit New Report</h3>
+                    <form onsubmit="addRevenue(event)" class="flex flex-wrap gap-4 items-end">
+                        <div class="flex-grow">
+                            <label class="input-label block mb-1">Date</label>
+                            <input type="date" name="tanggal" class="paper-input border-b border-[#c0a080] w-full" required="required" />
+                        </div>
+                        <div class="flex-grow">
+                            <label class="input-label block mb-1">Gross Revenue (Rp)</label>
+                            <input type="number" name="omzet" class="paper-input border-b border-[#c0a080] w-full" required="required" />
+                        </div>
+                        <button type="submit" class="btn-skeuo w-auto px-6 py-2 text-sm">Submit</button>
+                    </form>
+                </div>
+
+<!--            Report History -->
+                <div class="flex justify-between items-end mb-2">
+                    <h3 class="text-lg font-bold text-[#4e342e] mb-0">Report History</h3>
+                    <div class="flex gap-2 items-center">
+                        <span class="text-xs font-bold text-[#5d4037]">Filter:</span>
+                        <select id="rev-preset" class="skeuo-input-box py-1 px-2 text-sm" onchange="handlePresetChange('rev')">
+                            <option value="today">Today</option>
+                            <option value="yesterday">Yesterday</option>
+                            <option value="last7" selected="selected">Last 7 Days</option>
+                            <option value="this_month">This Month</option>
+                            <option value="custom">Custom Range</option>
+                        </select>
+                        <div id="rev-custom-range" class="flex items-center gap-2 hidden">
+                            <input type="date" id="rev-start-date" class="skeuo-input-box py-1 px-2 text-sm" onchange="loadHistory()" />
+                            <span class="text-xs text-[#5d4037]">-</span>
+                            <input type="date" id="rev-end-date" class="skeuo-input-box py-1 px-2 text-sm" onchange="loadHistory()" />
+                        </div>
+                    </div>
+                </div>
+
+<!--            Total Revenue Summary -->
+                <div class="mb-4 p-4 bg-[#fdfbf7] border border-[#eecfa1] rounded-lg flex justify-between items-center shadow-sm">
+                    <div>
+                        <h4 class="text-sm font-bold text-[#5d4037] uppercase tracking-wider">Total Revenue (Selected Period)</h4>
+                        <p class="text-xs text-[#8d6e63]">Based on current filters</p>
+                    </div>
+                    <div class="text-right">
+                        <span id="revenue-summary-total" class="text-2xl font-bold text-[#3e2723]">Rp 0</span>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table class="skeuo-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Date</th>
+                                <th>Revenue</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="revenue-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+<!--        Stock Tab -->
+            <div id="tab-stock" class="hidden">
+                <h2 class="section-title">Daily Stock Usage Reporting</h2>
+                <h3 id="stock-branch-name" class="text-xl font-bold text-[#8c6a48] mb-6 border-b-2 border-[#8c6a48] inline-block pb-1"></h3>
+
+<!--            Submit Usage Report -->
+                <div class="paper-card mb-8 p-4">
+                    <h3 class="text-lg font-bold text-[#8c6a48] mb-4">Submit Usage Report</h3>
+                    <form onsubmit="addStock(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="col-span-full">
+                            <label class="input-label block mb-1">Date</label>
+                            <input type="date" name="tanggal" class="paper-input border-b border-[#c0a080] w-full" required="required" />
+                        </div>
+
+                        <div>
+                            <label class="input-label block mb-1">Arabica (Kg)</label>
+                            <input type="number" step="0.1" name="arabica" class="paper-input border-b border-[#c0a080] w-full" required="required" />
+                        </div>
+                        <div>
+                            <label class="input-label block mb-1">Robusta (Kg)</label>
+                            <input type="number" step="0.1" name="robusta" class="paper-input border-b border-[#c0a080] w-full" required="required" />
+                        </div>
+                        <div>
+                            <label class="input-label block mb-1">Liberica (Kg)</label>
+                            <input type="number" step="0.1" name="liberica" class="paper-input border-b border-[#c0a080] w-full" required="required" />
+                        </div>
+                        <div>
+                            <label class="input-label block mb-1">Decaf (Kg)</label>
+                            <input type="number" step="0.1" name="decaf" class="paper-input border-b border-[#c0a080] w-full" required="required" />
+                        </div>
+                        <div>
+                            <label class="input-label block mb-1">Milk (Liter)</label>
+                            <input type="number" step="0.1" name="susu" class="paper-input border-b border-[#c0a080] w-full" required="required" />
+                        </div>
+
+                        <div class="col-span-full mt-4">
+                            <button type="submit" class="btn-skeuo w-auto px-6 py-2 text-sm">Submit Report</button>
+                        </div>
+                    </form>
+                </div>
+
+<!--            Usage History -->
+                <div class="flex justify-between items-end mb-2">
+                    <h3 class="text-lg font-bold text-[#4e342e] mb-0">Usage History</h3>
+                    <div class="flex gap-2 items-center">
+                        <span class="text-xs font-bold text-[#5d4037]">Filter:</span>
+                        <select id="stock-preset" class="skeuo-input-box py-1 px-2 text-sm" onchange="handlePresetChange('stock')">
+                            <option value="today">Today</option>
+                            <option value="yesterday">Yesterday</option>
+                            <option value="last7" selected="selected">Last 7 Days</option>
+                            <option value="this_month">This Month</option>
+                            <option value="custom">Custom Range</option>
+                        </select>
+                        <div id="stock-custom-range" class="flex items-center gap-2 hidden">
+                            <input type="date" id="stock-start-date" class="skeuo-input-box py-1 px-2 text-sm" onchange="loadHistory()" />
+                            <span class="text-xs text-[#5d4037]">-</span>
+                            <input type="date" id="stock-end-date" class="skeuo-input-box py-1 px-2 text-sm" onchange="loadHistory()" />
+                        </div>
+                    </div>
+                </div>
+
+<!--            Total Usage Summary -->
+                <div class="mb-4 p-4 bg-[#fdfbf7] border border-[#eecfa1] rounded-lg shadow-sm">
+                    <div class="flex justify-between items-center mb-2">
+                        <div>
+                            <h4 class="text-sm font-bold text-[#5d4037] uppercase tracking-wider">Total Usage Summary</h4>
+                            <p class="text-xs text-[#8d6e63]">Total Kg/L used in selected period</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-5 gap-4 text-center">
+                        <div class="p-2 bg-white rounded border border-[#eecfa1]">
+                            <span class="block text-xs font-bold text-[#8d6e63] mb-1">Arabica</span>
+                            <span id="sum-arabica" class="block text-lg font-bold text-[#5d4037]">0 Kg</span>
+                        </div>
+                        <div class="p-2 bg-white rounded border border-[#eecfa1]">
+                            <span class="block text-xs font-bold text-[#8d6e63] mb-1">Robusta</span>
+                            <span id="sum-robusta" class="block text-lg font-bold text-[#5d4037]">0 Kg</span>
+                        </div>
+                        <div class="p-2 bg-white rounded border border-[#eecfa1]">
+                            <span class="block text-xs font-bold text-[#8d6e63] mb-1">Liberica</span>
+                            <span id="sum-liberica" class="block text-lg font-bold text-[#5d4037]">0 Kg</span>
+                        </div>
+                        <div class="p-2 bg-white rounded border border-[#eecfa1]">
+                            <span class="block text-xs font-bold text-[#8d6e63] mb-1">Decaf</span>
+                            <span id="sum-decaf" class="block text-lg font-bold text-[#5d4037]">0 Kg</span>
+                        </div>
+                        <div class="p-2 bg-white rounded border border-[#eecfa1]">
+                            <span class="block text-xs font-bold text-[#8d6e63] mb-1">Milk</span>
+                            <span id="sum-susu" class="block text-lg font-bold text-[#5d4037]">0 L</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table class="skeuo-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Date</th>
+                                <th>Arabica</th>
+                                <th>Robusta</th>
+                                <th>Liberica</th>
+                                <th>Decaf</th>
+                                <th>Milk</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stock-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
     </div>
-
-    
-    <div class="main-content">
-
-      
-      <div id="tab-revenue">
-        <h2 class="section-title">Daily Revenue Reporting</h2>
-        <h3 id="rev-branch-name"
-          class="text-xl font-bold text-[#8c6a48] mb-6 border-b-2 border-[#8c6a48] inline-block pb-1"></h3>
-
-        
-        <div class="paper-card mb-8 p-4">
-          <h3 class="text-lg font-bold text-[#8c6a48] mb-4">Submit New Report</h3>
-          <form onsubmit="addRevenue(event)" class="flex flex-wrap gap-4 items-end">
-            <div class="flex-grow">
-              <label class="input-label block mb-1">Date</label>
-              <input type="date" name="tanggal" class="paper-input border-b border-[#c0a080] w-full"
-                required="required" />
-            </div>
-            <div class="flex-grow">
-              <label class="input-label block mb-1">Gross Revenue (Rp)</label>
-              <input type="number" name="omzet" class="paper-input border-b border-[#c0a080] w-full"
-                required="required" />
-            </div>
-            <button type="submit" class="btn-skeuo w-auto px-6 py-2 text-sm">Submit</button>
-          </form>
-        </div>
-
-        
-        
-        <div class="flex justify-between items-end mb-2">
-          <h3 class="text-lg font-bold text-[#4e342e] mb-0">Report History</h3>
-          <div class="flex gap-2 items-center">
-            <span class="text-xs font-bold text-[#5d4037]">Filter:</span>
-            <select id="rev-preset" class="skeuo-input-box py-1 px-2 text-sm" onchange="handlePresetChange('rev')">
-              <option value="today">Today</option>
-              <option value="yesterday">Yesterday</option>
-              <option value="last7" selected="selected">Last 7 Days</option>
-              <option value="this_month">This Month</option>
-              <option value="custom">Custom Range</option>
-            </select>
-            <div id="rev-custom-range" class="flex items-center gap-2 hidden">
-              <input type="date" id="rev-start-date" class="skeuo-input-box py-1 px-2 text-sm"
-                onchange="loadHistory()" />
-              <span class="text-xs text-[#5d4037]">-</span>
-              <input type="date" id="rev-end-date" class="skeuo-input-box py-1 px-2 text-sm" onchange="loadHistory()" />
-            </div>
-          </div>
-        </div>
-
-        
-        <div
-          class="mb-4 p-4 bg-[#fdfbf7] border border-[#eecfa1] rounded-lg flex justify-between items-center shadow-sm">
-          <div>
-            <h4 class="text-sm font-bold text-[#5d4037] uppercase tracking-wider">Total Revenue (Selected Period)</h4>
-            <p class="text-xs text-[#8d6e63]">Based on current filters</p>
-          </div>
-          <div class="text-right">
-            <span id="revenue-summary-total" class="text-2xl font-bold text-[#3e2723]">Rp 0</span>
-          </div>
-        </div>
-        <div class="table-container">
-          <table class="skeuo-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Date</th>
-                <th>Revenue</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="revenue-table-body"></tbody>
-          </table>
-        </div>
-      </div>
-
-      
-      <div id="tab-stock" class="hidden">
-        <h2 class="section-title">Daily Stock Usage Reporting</h2>
-        <h3 id="stock-branch-name"
-          class="text-xl font-bold text-[#8c6a48] mb-6 border-b-2 border-[#8c6a48] inline-block pb-1"></h3>
-
-        
-        <div class="paper-card mb-8 p-4">
-          <h3 class="text-lg font-bold text-[#8c6a48] mb-4">Submit Usage Report</h3>
-          <form onsubmit="addStock(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="col-span-full">
-              <label class="input-label block mb-1">Date</label>
-              <input type="date" name="tanggal" class="paper-input border-b border-[#c0a080] w-full"
-                required="required" />
-            </div>
-
-            <div>
-              <label class="input-label block mb-1">Arabica (Kg)</label>
-              <input type="number" step="0.1" name="arabica" class="paper-input border-b border-[#c0a080] w-full"
-                required="required" />
-            </div>
-            <div>
-              <label class="input-label block mb-1">Robusta (Kg)</label>
-              <input type="number" step="0.1" name="robusta" class="paper-input border-b border-[#c0a080] w-full"
-                required="required" />
-            </div>
-            <div>
-              <label class="input-label block mb-1">Liberica (Kg)</label>
-              <input type="number" step="0.1" name="liberica" class="paper-input border-b border-[#c0a080] w-full"
-                required="required" />
-            </div>
-            <div>
-              <label class="input-label block mb-1">Decaf (Kg)</label>
-              <input type="number" step="0.1" name="decaf" class="paper-input border-b border-[#c0a080] w-full"
-                required="required" />
-            </div>
-            <div>
-              <label class="input-label block mb-1">Milk (Liter)</label>
-              <input type="number" step="0.1" name="susu" class="paper-input border-b border-[#c0a080] w-full"
-                required="required" />
-            </div>
-
-            <div class="col-span-full mt-4">
-              <button type="submit" class="btn-skeuo w-auto px-6 py-2 text-sm">Submit Report</button>
-            </div>
-          </form>
-        </div>
-
-        
-        
-        <div class="flex justify-between items-end mb-2">
-          <h3 class="text-lg font-bold text-[#4e342e] mb-0">Usage History</h3>
-          <div class="flex gap-2 items-center">
-            <span class="text-xs font-bold text-[#5d4037]">Filter:</span>
-            <select id="stock-preset" class="skeuo-input-box py-1 px-2 text-sm" onchange="handlePresetChange('stock')">
-              <option value="today">Today</option>
-              <option value="yesterday">Yesterday</option>
-              <option value="last7" selected="selected">Last 7 Days</option>
-              <option value="this_month">This Month</option>
-              <option value="custom">Custom Range</option>
-            </select>
-            <div id="stock-custom-range" class="flex items-center gap-2 hidden">
-              <input type="date" id="stock-start-date" class="skeuo-input-box py-1 px-2 text-sm"
-                onchange="loadHistory()" />
-              <span class="text-xs text-[#5d4037]">-</span>
-              <input type="date" id="stock-end-date" class="skeuo-input-box py-1 px-2 text-sm"
-                onchange="loadHistory()" />
-            </div>
-          </div>
-        </div>
-
-        
-        <div class="mb-4 p-4 bg-[#fdfbf7] border border-[#eecfa1] rounded-lg shadow-sm">
-          <div class="flex justify-between items-center mb-2">
-            <div>
-              <h4 class="text-sm font-bold text-[#5d4037] uppercase tracking-wider">Total Usage Summary</h4>
-              <p class="text-xs text-[#8d6e63]">Total Kg/L used in selected period</p>
-            </div>
-          </div>
-          <div class="grid grid-cols-5 gap-4 text-center">
-            <div class="p-2 bg-white rounded border border-[#eecfa1]">
-              <span class="block text-xs font-bold text-[#8d6e63] mb-1">Arabica</span>
-              <span id="sum-arabica" class="block text-lg font-bold text-[#5d4037]">0 Kg</span>
-            </div>
-            <div class="p-2 bg-white rounded border border-[#eecfa1]">
-              <span class="block text-xs font-bold text-[#8d6e63] mb-1">Robusta</span>
-              <span id="sum-robusta" class="block text-lg font-bold text-[#5d4037]">0 Kg</span>
-            </div>
-            <div class="p-2 bg-white rounded border border-[#eecfa1]">
-              <span class="block text-xs font-bold text-[#8d6e63] mb-1">Liberica</span>
-              <span id="sum-liberica" class="block text-lg font-bold text-[#5d4037]">0 Kg</span>
-            </div>
-            <div class="p-2 bg-white rounded border border-[#eecfa1]">
-              <span class="block text-xs font-bold text-[#8d6e63] mb-1">Decaf</span>
-              <span id="sum-decaf" class="block text-lg font-bold text-[#5d4037]">0 Kg</span>
-            </div>
-            <div class="p-2 bg-white rounded border border-[#eecfa1]">
-              <span class="block text-xs font-bold text-[#8d6e63] mb-1">Milk</span>
-              <span id="sum-susu" class="block text-lg font-bold text-[#5d4037]">0 L</span>
-            </div>
-          </div>
-        </div>
-        <div class="table-container">
-          <table class="skeuo-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Date</th>
-                <th>Arabica</th>
-                <th>Robusta</th>
-                <th>Liberica</th>
-                <th>Decaf</th>
-                <th>Milk</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="stock-table-body"></tbody>
-          </table>
-        </div>
-      </div>
-
-    </div>
-  </div>
 </body>
 
 </html>

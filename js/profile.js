@@ -1,3 +1,4 @@
+// Muat Profil
 async function loadProfile() {
     try {
         const res = await fetch('../api/profile_api.php');
@@ -8,7 +9,7 @@ async function loadProfile() {
             return;
         }
 
-        // Populate Form
+        // Isi Form
         document.getElementById('input-username').value = user.username;
         document.getElementById('input-fullname').value = user.full_name || '';
         document.getElementById('input-phone').value = user.telp || '';
@@ -16,7 +17,7 @@ async function loadProfile() {
         document.getElementById('input-branch').value = user.branch_name || '-';
         document.getElementById('display-id').textContent = '#' + user.id_user;
 
-        // Populate Top Section
+        // Isi Bagian Atas
         document.getElementById('display-fullname').textContent = user.full_name || user.username;
         document.getElementById('display-role').textContent = user.role;
 
@@ -26,16 +27,16 @@ async function loadProfile() {
             avatar.classList.remove('opacity-80');
             avatar.classList.add('object-cover', 'w-full', 'h-full');
 
-            // Also update sidebar
+            // Update sidebar juga
             const sbAvatar = document.querySelector('.profile-avatar-small');
             if (sbAvatar) sbAvatar.src = '../uploads/profiles/' + user.profile_photo;
         }
 
-        // Update Sidebar UI - Greeting uses Username as requested
+        // Update UI Sidebar - Salam menggunakan Username sesuai permintaan
         document.getElementById('sb-name').textContent = 'Hello, ' + user.username;
         document.getElementById('sb-role').textContent = user.role;
 
-        // Update Dashboard Link
+        // Update Link Dashboard
         const dbLink = document.getElementById('sb-dashboard');
         const dbText = document.getElementById('sb-dashboard-text');
         const titleLink = document.getElementById('sidebar-title-link');
@@ -60,6 +61,7 @@ async function loadProfile() {
     }
 }
 
+// Simpan Profil
 async function saveProfile(e) {
     e.preventDefault();
     const form = document.getElementById('profile-form');
@@ -74,7 +76,7 @@ async function saveProfile(e) {
 
         if (result.success) {
             alert('Profile updated successfully!');
-            loadProfile(); // Reload to refresh data and UI
+            loadProfile();
         } else {
             alert('Error updating profile: ' + (result.error || 'Unknown error'));
         }
@@ -85,3 +87,51 @@ async function saveProfile(e) {
 }
 
 document.addEventListener('DOMContentLoaded', loadProfile);
+
+// Password Modal Functions
+function openPasswordModal() {
+    const modal = document.getElementById('password-modal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+function closePasswordModal() {
+    const modal = document.getElementById('password-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.getElementById('password-form').reset();
+}
+
+async function changePassword(e) {
+    e.preventDefault();
+    
+    const form = document.getElementById('password-form');
+    const formData = new FormData(form);
+    
+    const newPass = formData.get('new_password');
+    const confirmPass = formData.get('confirm_password');
+    
+    if (newPass !== confirmPass) {
+        alert('New passwords do not match!');
+        return;
+    }
+    
+    try {
+        const res = await fetch('../api/change_password.php', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await res.json();
+        
+        if (result.success) {
+            alert('Password updated successfully!');
+            closePasswordModal();
+        } else {
+            alert('Error: ' + (result.error || 'Failed to update password'));
+        }
+    } catch (e) {
+        console.error('Password change failed:', e);
+        alert('An error occurred while updating the password.');
+    }
+}

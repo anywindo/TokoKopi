@@ -1,18 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
-
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="EN" lang="EN">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Profile - Brew.</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="../js/profile.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Baskervville:ital@0;1&amp;family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&amp;display=swap"
-        rel="stylesheet" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>My Profile</title>
+    <script type="text/javascript" src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" src="../js/profile.js"></script>
     <link rel="stylesheet" href="../css/style.css" />
 </head>
 
@@ -20,16 +13,21 @@
 
     <div class="dashboard-container">
         
+<!--    Sidebar -->
         <div class="sidebar">
             <div class="sidebar-header">
-                <a href="#" id="sidebar-title-link"
-                    class="text-2xl font-bold text-[#3e2723] no-underline hover:text-[#8d6e63] transition-colors">brew.</a>
+                <a href="profile.xhtml" class="text-2xl font-bold no-underline hover:text-[#8d6e63] transition-colors">brew.</a>
             </div>
+
+<!--        Sidebar List Items -->
             <ul class="sidebar-menu" id="sidebar-menu">
+                
+<!--            List 0: Profile card -->
                 <li>
                     <a href="profile.xhtml" class="profile-card-link">
                         <div class="profile-card">
-                            <img src="../assets/coffe-bean.svg" alt="Profile" class="profile-avatar-small" />
+                            <img src="../assets/coffe-bean.svg" alt="Profile" class="profile-avatar-small"/>
+
                             <div class="profile-info">
                                 <span class="profile-name" id="sb-name">Loading...</span>
                                 <span class="profile-role" id="sb-role">...</span>
@@ -37,12 +35,16 @@
                         </div>
                     </a>
                 </li>
+
+<!--            List 1: Dashboard -->
                 <li>
                     <a href="#" id="sb-dashboard" class="flex items-center">
                         <img src="../assets/dashboard.svg" class="w-5 h-5 mr-2 inline-block opacity-70" alt="" />
                         <span id="sb-dashboard-text">Dashboard</span>
                     </a>
                 </li>
+
+<!--            List 2: Logout -->
                 <li class="push-bottom">
                     <a href="../api/logout.php" class="text-red-400 hover:text-red-200 flex items-center">
                         <img src="../assets/logout.svg" class="w-5 h-5 mr-2 inline-block opacity-70" alt="" />
@@ -52,66 +54,52 @@
             </ul>
         </div>
 
-        
+<!--    Main Content -->
         <div class="main-content">
             <h2 class="section-title">My Profile</h2>
 
             <div class="mt-8 max-w-4xl mx-auto">
                 <form id="profile-form" onsubmit="saveProfile(event)">
 
-                    
+<!--                Avatar Section -->
                     <div class="flex flex-col items-center mb-12">
-                        <div
-                            class="w-40 h-40 flex items-center justify-center rounded-full overflow-hidden relative group mb-4">
-                            <img id="profile-avatar-img" src="../assets/coffe-bean.svg" alt="Profile"
-                                class="w-24 h-24 opacity-80" />
+                        <div class="w-40 h-40 flex items-center justify-center rounded-full overflow-hidden relative group mb-4">
+                            <img id="profile-avatar-img" src="../assets/coffe-bean.svg" alt="Profile" class="w-24 h-24 opacity-80" />
 
-                            
-                            <div class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
-                                onclick="document.getElementById('photo-input').click()">
+                            <div class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer" onclick="document.getElementById('photo-input').click()">
                                 <span class="text-white font-bold text-sm">Change</span>
                             </div>
                         </div>
-                        <input type="file" name="profile_photo" id="photo-input" class="hidden" accept="image/*"
-                            onchange="document.getElementById('save-btn').classList.remove('opacity-50'); document.getElementById('save-btn').disabled=false;" />
+                        <input type="file" name="profile_photo" id="photo-input" class="hidden" accept="image/*" onchange="document.getElementById('save-btn').classList.remove('opacity-50'); document.getElementById('save-btn').disabled=false;" />
 
                         <h2 id="display-fullname" class="text-2xl font-bold text-[#3e2723] mb-1">Loading...</h2>
                         <p id="display-role" class="text-[#8d6e63] uppercase tracking-widest text-sm font-bold">...</p>
                     </div>
 
-                    
+<!--                Edit Profile Section -->
                     <div>
-                        <h3 class="text-xl font-bold text-[#4e342e] mb-6 border-b border-[#d7ccc8] pb-2">Edit Profile
-                        </h3>
+                        <h3 class="text-xl font-bold text-[#4e342e] mb-6 border-b border-[#d7ccc8] pb-2">Edit Profile</h3>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                             <div>
                                 <label class="input-label block mb-2">Username</label>
-                                <input type="text" id="input-username"
-                                    class="skeuo-input-box w-full bg-[#f5f5f5] border-[#e0e0e0] text-[#757575] cursor-not-allowed"
-                                    readonly="readonly" />
+                                <input type="text" id="input-username" class="skeuo-input-box w-full bg-[#f5f5f5] border-[#e0e0e0] text-[#757575] cursor-not-allowed" readonly="readonly" />
                             </div>
                             <div>
                                 <label class="input-label block mb-2">Role</label>
-                                <input type="text" id="input-role"
-                                    class="skeuo-input-box w-full bg-[#f5f5f5] border-[#e0e0e0] text-[#757575] cursor-not-allowed"
-                                    readonly="readonly" />
+                                <input type="text" id="input-role" class="skeuo-input-box w-full bg-[#f5f5f5] border-[#e0e0e0] text-[#757575] cursor-not-allowed" readonly="readonly" />
                             </div>
                             <div>
                                 <label class="input-label block mb-2">Full Name</label>
-                                <input type="text" name="full_name" id="input-fullname" class="skeuo-input-box w-full"
-                                    placeholder="Enter full name" />
+                                <input type="text" name="full_name" id="input-fullname" class="skeuo-input-box w-full" placeholder="Enter full name" />
                             </div>
                             <div>
                                 <label class="input-label block mb-2">Phone Number</label>
-                                <input type="text" name="telp" id="input-phone" class="skeuo-input-box w-full"
-                                    placeholder="08..." />
+                                <input type="text" name="telp" id="input-phone" class="skeuo-input-box w-full" placeholder="08..." />
                             </div>
                             <div>
                                 <label class="input-label block mb-2">Branch</label>
-                                <input type="text" id="input-branch"
-                                    class="skeuo-input-box w-full bg-[#f5f5f5] border-[#e0e0e0] text-[#757575] cursor-not-allowed"
-                                    readonly="readonly" />
+                                <input type="text" id="input-branch" class="skeuo-input-box w-full bg-[#f5f5f5] border-[#e0e0e0] text-[#757575] cursor-not-allowed" readonly="readonly" />
                             </div>
                             <div>
                                 <label class="input-label block mb-2">User ID</label>
@@ -120,8 +108,7 @@
                         </div>
 
                         <div class="mt-12 flex justify-end items-center gap-6">
-                            <button type="button" onclick="alert('Feature coming soon!')"
-                                class="text-[#8c6a48] hover:text-[#5d4037] font-bold text-sm">Change Password</button>
+                            <button type="button" onclick="openPasswordModal()" class="text-[#8c6a48] hover:text-[#5d4037] font-bold text-sm">Change Password</button>
                             <button type="submit" id="save-btn" class="btn-skeuo w-auto px-8 py-2">Save Changes</button>
                         </div>
                     </div>
@@ -129,6 +116,38 @@
             </div>
         </div>
     </div>
+
+    <!-- Password Change Modal -->
+    <div id="password-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-8 transform transition-all scale-100">
+            <h3 class="text-2xl font-bold text-[#3e2723] mb-6">Change Password</h3>
+            
+            <form id="password-form" onsubmit="changePassword(event)">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold text-[#5d4037] mb-1">Current Password</label>
+                        <input type="password" name="current_password" required="required" class="w-full px-4 py-2 border border-[#d7ccc8] rounded-lg focus:outline-none focus:border-[#8d6e63] bg-[#fafafa]" placeholder="Enter current password" />
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-bold text-[#5d4037] mb-1">New Password</label>
+                        <input type="password" name="new_password" required="required" minlength="6" class="w-full px-4 py-2 border border-[#d7ccc8] rounded-lg focus:outline-none focus:border-[#8d6e63] bg-[#fafafa]" placeholder="Enter new password" />
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-bold text-[#5d4037] mb-1">Confirm New Password</label>
+                        <input type="password" name="confirm_password" required="required" minlength="6" class="w-full px-4 py-2 border border-[#d7ccc8] rounded-lg focus:outline-none focus:border-[#8d6e63] bg-[#fafafa]" placeholder="Confirm new password" />
+                    </div>
+                </div>
+
+                <div class="mt-8 flex justify-end gap-3">
+                    <button type="button" onclick="closePasswordModal()" class="px-4 py-2 text-[#8c6a48] font-bold hover:bg-[#efebe9] rounded-lg transition-colors">Cancel</button>
+                    <button type="submit" class="bg-[#8d6e63] hover:bg-[#795548] text-white font-bold px-6 py-2 rounded-lg shadow-md transition-colors">Update Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 </body>
 
 </html>

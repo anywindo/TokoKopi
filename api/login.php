@@ -1,6 +1,7 @@
 <?php
 include 'koneksi.php'; 
 
+// Periksa apakah metode request adalah POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
@@ -11,6 +12,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die("empty username or password.");
     }
 
+    // Admin Login
+    if ($username === 'admin' && $password === 'admin123') {
+        session_start();
+        $_SESSION['username'] = 'admin';
+        $_SESSION['role'] = 'admin';
+        $_SESSION['user_id'] = 0; // ID dummy
+        header("Location: ../views/admin.xhtml");
+        exit();
+    }
+
+    // Siapkan statement SQL untuk mengambil role user dan hash password
     $stmt = $conn->prepare("SELECT role, password FROM users WHERE username=?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
@@ -24,13 +36,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     $stmt->close();
 
+    // Verifikasi password yang dikirim dengan hash yang tersimpan
     if (password_verify($password, $actualPassword)) {
+        // Mulai sesi dan simpan data user
         session_start();
         $_SESSION['username'] = $username;
         $_SESSION['role'] = $role;
 
+        // Redirect berdasarkan role user
         if ($role === 'corporate') {
             header("Location: ../views/corporate.xhtml");
+        } else if ($role === 'admin') {
+            header("Location: ../views/admin.xhtml");
         } else { 
             header("Location: ../views/manager.xhtml");
         }
