@@ -15,25 +15,49 @@
 <div class="dashboard-container">
 <!--    Sidebar -->
     <div class="sidebar">
-      <div class="sidebar-header">
-        <a href="../index.xhtml" class="text-2xl font-bold text-[#d7ccc8] no-underline hover:text-white">brew.</a>
-      </div>
-      <ul class="sidebar-menu">
-        <li>
-          <a href="profile.xhtml"
-            class="w-full flex flex-col items-center justify-center text-center !px-0 !py-6 !border-none hover:!bg-transparent">
-            <img src="../assets/coffe-bean.svg" alt="Profile" id="profile-picture"
-              class="block mx-auto w-16 h-16 rounded-full border-2 border-[#8c6a48] p-1 bg-[#f0e0c9] shadow-lg" />
-            <span id="sidebar-username">Hello, User</span>
-          </a>
-        </li>
-        <li><a href="#" onclick="showTab('dashboard')" id="nav-dashboard" class="active">Dashboard</a></li>
-        <li><a href="#" onclick="showTab('revenue')" id="nav-revenue">Revenue History</a></li>
-        <li><a href="#" onclick="showTab('stock')" id="nav-stock">Stock History</a></li>
-        <li><a href="#" onclick="showTab('branches')" id="nav-branches">Manage Branches</a></li>
+        <div class="sidebar-header">
+            <a href="corporate.xhtml" class="text-2xl font-bold no-underline hover:text-[#8d6e63] transition-colors">brew.</a>
+        </div>
 
-        <li class="push-bottom"><a href="../index.xhtml" class="text-red-400 hover:text-red-200">Logout</a></li>
-      </ul>
+<!--        Sidebar List Items -->
+        <ul class="sidebar-menu">
+
+<!--            List 0: Profile card -->
+            <li><a href="profile.xhtml" class="profile-card-link">
+                <div class="profile-card">
+                    <img src="../assets/coffe-bean.svg" alt="Profile" class="profile-avatar-small" />
+                    <div class="profile-info">
+                        <span id="sidebar-username" class="profile-name">Hello, User</span>
+                        <span class="profile-role">Corporate</span>
+                    </div>
+                </div>
+            </a></li>
+
+<!--            List 1: Dashboard -->
+            <li><a href="#" onclick="showTab('dashboard')" id="nav-dashboard" class="active flex items-center">
+                <img src="../assets/dashboard.svg" class="w-5 h-5 mr-2 inline-block" alt="Dashboard menu." />Dashboard
+            </a></li>
+
+<!--            List 2: Revenue History -->
+            <li><a href="#" onclick="showTab('revenue')" id="nav-revenue" class="flex items-center">
+                <img src="../assets/revenue.svg" class="w-5 h-5 mr-2 inline-block" alt="Revenue history menu." />Revenue History
+            </a></li>
+
+<!--            List 3: Stock History -->
+            <li><a href="#" onclick="showTab('stock')" id="nav-stock" class="flex items-center">
+                <img src="../assets/stock.svg" class="w-5 h-5 mr-2 inline-block" alt="Stock history menu." />Stock History
+            </a></li>
+
+<!--            List 4: Manage Branches -->
+            <li><a href="#" onclick="showTab('branches')" id="nav-branches" class="flex items-center">
+                <img src="../assets/branches.svg" class="w-5 h-5 mr-2 inline-block" alt="Manage branches menu." />Manage Branches
+            </a></li>
+
+<!--            List 5: Log out-->
+            <li class="push-bottom"><a href="../api/logout.php" class="text-red-400 hover:text-red-200 flex items-center">
+                <img src="../assets/logout.svg" class="w-5 h-5 mr-2 inline-block" alt="Logout button." />Logout
+            </a></li>
+        </ul>
     </div>
 
 <!--    Main Content -->
@@ -183,6 +207,7 @@
                     <thead><tr>
                         <th>Date</th>
                         <th>Branch</th>
+                        <th>Reporter</th>
                         <th>Arabica</th>
                         <th>Robusta</th>
                         <th>Liberica</th>
@@ -246,288 +271,8 @@
         </form>
 
     </div>
-  </div>
+</div>
 
-  <script>
-    //<![CDATA[
-    // --- TABS ---
-    function showTab(tabId) {
-      ['dashboard', 'revenue', 'stock', 'branches'].forEach(id => {
-        document.getElementById('tab-' + id).classList.add('hidden');
-        document.getElementById('nav-' + id).classList.remove('active');
-      });
-      document.getElementById('tab-' + tabId).classList.remove('hidden');
-      document.getElementById('nav-' + tabId).classList.add('active');
-    }
-
-    // --- API ---
-    async function api(action, method = 'GET', data = null) {
-      const options = { method };
-      if (data) {
-        options.body = JSON.stringify(data);
-        options.headers = { 'Content-Type': 'application/json' };
-      }
-      const res = await fetch(`../api/corporate_api.php?action=${action}`, options);
-      return await res.json();
-    }
-
-    // --- DASHBOARD ---
-    async function loadDashboard() {
-      const data = await api('get_dashboard_data');
-
-      // Revenue Chart
-      new Chart(document.getElementById('revenueChart'), {
-        type: 'line',
-        data: {
-          labels: data.revenue_chart.map(d => d.tanggal),
-          datasets: [{
-            label: 'Revenue',
-            data: data.revenue_chart.map(d => d.total),
-            borderColor: '#8c6a48',
-            tension: 0.4
-          }]
-        }
-      });
-
-      // Stock Chart
-      if (data.stock_avg) {
-        new Chart(document.getElementById('stockChart'), {
-          type: 'bar',
-          data: {
-            labels: ['Arabica', 'Robusta', 'Liberica', 'Decaf', 'Milk'],
-            datasets: [{
-              label: 'Avg Usage',
-              data: [data.stock_avg.arabica, data.stock_avg.robusta, data.stock_avg.liberica, data.stock_avg.decaf, data.stock_avg.susu],
-              backgroundColor: '#d4bba2'
-            }]
-          }
-        });
-      }
-
-      // Branch Chart
-      new Chart(document.getElementById('branchChart'), {
-        type: 'bar',
-        data: {
-          labels: data.branch_revenue.map(d => d.nama),
-          datasets: [{
-            label: 'Total Revenue',
-            data: data.branch_revenue.map(d => d.total),
-            backgroundColor: '#5d4037'
-          }]
-        }
-      });
-    }
-
-    // --- REVENUE ---
-    async function loadRevenue() {
-      const date = document.getElementById('rev-date').value;
-      const branch = document.getElementById('rev-branch').value;
-      const url = `get_revenue_history&date=${date}&branch=${branch}`;
-
-      // Manual fetch for query params
-      const res = await fetch(`../api/corporate_api.php?action=${url}`);
-      const data = await res.json();
-
-      const tbody = document.getElementById('revenue-table-body');
-      tbody.innerHTML = '';
-      data.forEach(row => {
-        tbody.innerHTML += `<tr>
-                    <td>${row.tanggal}</td>
-                    <td>${row.branch_name}</td>
-                    <td>${row.pelapor}</td>
-                    <td>Rp ${parseInt(row.omzet).toLocaleString()}</td>
-                </tr>`;
-      });
-    }
-
-    // --- STOCK ---
-    async function loadStock() {
-      const date = document.getElementById('stock-date').value;
-      const branch = document.getElementById('stock-branch').value;
-      const url = `get_stock_history&date=${date}&branch=${branch}`;
-
-      const res = await fetch(`../api/corporate_api.php?action=${url}`);
-      const data = await res.json();
-
-      const tbody = document.getElementById('stock-table-body');
-      tbody.innerHTML = '';
-      data.forEach(row => {
-        tbody.innerHTML += `<tr>
-                    <td>${row.tanggal}</td>
-                    <td>${row.branch_name}</td>
-                    <td>${row.arabica}</td>
-                    <td>${row.robusta}</td>
-                    <td>${row.liberica}</td>
-                    <td>${row.decaf}</td>
-                    <td>${row.susu}</td>
-                </tr>`;
-      });
-    }
-
-    // --- BRANCHES ---
-    async function loadBranches() {
-      const data = await api('get_branches');
-      const tbody = document.getElementById('branch-table-body');
-      const selectRev = document.getElementById('rev-branch');
-      const selectStock = document.getElementById('stock-branch');
-
-      // Populate Table
-      tbody.innerHTML = '';
-      data.forEach(row => {
-        // Fix: Escape single quotes for the onclick attribute
-        const rowData = encodeURIComponent(JSON.stringify(row)).replace(/'/g, '%27');
-        tbody.innerHTML += `<tr>
-                    <td>${row.id_branch}</td>
-                    <td>${row.nama}</td>
-                    <td>${row.alamat}</td>
-                    <td>
-                        <button onclick="openEditModal('branch', '${rowData}')" class="action-btn btn-edit">Edit</button>
-                        <button onclick="deleteBranch(${row.id_branch})" class="action-btn btn-delete">Delete</button>
-                    </td>
-                </tr>`;
-      });
-
-      // Populate Filters
-      const opts = '<option value="">All Branches</option>' + data.map(b => `<option value="${b.id_branch}">${b.nama}</option>`).join('');
-      selectRev.innerHTML = opts;
-      selectStock.innerHTML = opts;
-    }
-
-    async function addBranch(e) {
-      e.preventDefault();
-      const formData = new FormData(e.target);
-      const data = Object.fromEntries(formData.entries());
-      const res = await api('add_branch', 'POST', data);
-      if (res.success) {
-        e.target.reset();
-        loadBranches();
-      }
-    }
-
-    async function deleteBranch(id) {
-        if (!confirm('Delete branch?')) return;
-
-        const formData = new FormData();
-        formData.append('id', id);
-
-        const res = await fetch('../api/corporate_api.php?action=delete_branch', {
-            method: 'POST',
-            body: formData
-        });
-
-        const data = await res.json();
-
-        if (!data.success) {
-            alert("Gagal delete: " + data.error);
-            return;
-        }
-
-        alert("Berhasil dihapus");
-        loadBranches();
-    }
-
-
-    // --- EDIT MODAL LOGIC ---
-    function openEditModal(type, encodedData) {
-      const data = JSON.parse(decodeURIComponent(encodedData));
-      const modal = document.getElementById('edit-modal');
-      const fields = document.getElementById('edit-fields');
-
-      document.getElementById('edit-type').value = type;
-
-      fields.innerHTML = '';
-
-      // Helper to safe escape for HTML attributes
-      const safe = (str) => str ? String(str).replace(/"/g, '&quot;') : '';
-
-      if (type === 'branch') {
-        document.getElementById('edit-id').value = data.id_branch;
-        fields.innerHTML = `
-                <div>
-                    <label class="input-label block mb-1">Name</label>
-                    <input type="text" name="nama" value="${safe(data.nama)}" class="skeuo-input-box w-full" required="required" />
-                </div>
-                <div>
-                    <label class="input-label block mb-1">Address</label>
-                    <input type="text" name="alamat" value="${safe(data.alamat)}" class="skeuo-input-box w-full" required="required" />
-                </div>
-            `;
-      } else if (type === 'revenue') {
-        document.getElementById('edit-id').value = data.id_laporan;
-        fields.innerHTML = `
-                <div>
-                    <label class="input-label block mb-1">Revenue Amount</label>
-                    <input type="number" name="omzet" value="${data.omzet}" class="skeuo-input-box w-full" required="required" />
-                </div>
-                <div class="text-xs text-gray-500 italic">Date: ${data.tanggal} | Branch: ${data.branch_name}</div>
-            `;
-      } else if (type === 'stock') {
-        document.getElementById('edit-id').value = data.id_laporan;
-        fields.innerHTML = `
-                <div class="grid grid-cols-2 gap-4">
-                    <div><label class="input-label block mb-1">Arabica</label><input type="number" name="arabica" value="${data.arabica}" class="skeuo-input-box w-full" /></div>
-                    <div><label class="input-label block mb-1">Robusta</label><input type="number" name="robusta" value="${data.robusta}" class="skeuo-input-box w-full" /></div>
-                    <div><label class="input-label block mb-1">Liberica</label><input type="number" name="liberica" value="${data.liberica}" class="skeuo-input-box w-full" /></div>
-                    <div><label class="input-label block mb-1">Decaf</label><input type="number" name="decaf" value="${data.decaf}" class="skeuo-input-box w-full" /></div>
-                    <div><label class="input-label block mb-1">Milk</label><input type="number" name="susu" value="${data.susu}" class="skeuo-input-box w-full" /></div>
-                </div>
-                <div class="text-xs text-gray-500 italic mt-2">Date: ${data.tanggal} | Branch: ${data.branch_name}</div>
-            `;
-      }
-
-      modal.classList.remove('hidden');
-    }
-
-    function closeEditModal() {
-      document.getElementById('edit-modal').classList.add('hidden');
-    }
-
-    async function submitEdit(e) {
-      e.preventDefault();
-      const formData = new FormData(e.target);
-      const data = Object.fromEntries(formData.entries());
-      const type = data.type;
-
-      let action = '';
-      if (type === 'branch') action = 'update_branch';
-      if (type === 'revenue') action = 'update_omzet';
-      if (type === 'stock') action = 'update_stock';
-
-      const res = await api(action, 'POST', data);
-
-      if (res.success) {
-        closeEditModal();
-        if (type === 'branch') loadBranches();
-        if (type === 'revenue') loadRevenue();
-        if (type === 'stock') loadStock();
-      } else {
-        alert('Update failed: ' + res.error);
-      }
-    }
-
-    // Init
-    document.addEventListener('DOMContentLoaded', () => {
-      loadDashboard();
-      loadBranches();
-      loadRevenue();
-      loadStock();
-      loadUserProfile();
-    });
-
-    async function loadUserProfile() {
-      try {
-        const res = await fetch('../api/profile_api.php');
-        const data = await res.json();
-        if (data.username) {
-          document.getElementById('sidebar-username').textContent = 'Hello, ' + data.username;
-          document.getElementById('profile-picture').src = '../api/get_pfp.php?id=' + encodeURIComponent(data.id_user);
-        }
-      } catch (e) {
-        console.error('Failed to load profile', e);
-      }
-    }
-    //]]>
-  </script>
 </body>
 
 </html>

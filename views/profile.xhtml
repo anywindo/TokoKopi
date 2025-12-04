@@ -10,8 +10,10 @@
 </head>
 
 <body>
+
     <div class="dashboard-container">
-        <!-- Sidebar -->
+        
+<!--    Sidebar -->
         <div class="sidebar">
             <div class="sidebar-header">
                 <a href="profile.xhtml" class="text-2xl font-bold no-underline hover:text-[#8d6e63] transition-colors">brew.</a>
@@ -19,9 +21,20 @@
 
 <!--        Sidebar List Items -->
             <ul class="sidebar-menu" id="sidebar-menu">
-                <!-- Injected by JS -->
-                <li><a href="../index.xhtml" class="text-red-400 hover:text-red-200">Logout</a></li>
-            </ul>
+                
+<!--            List 0: Profile card -->
+                <li>
+                    <a href="profile.xhtml" class="profile-card-link">
+                        <div class="profile-card">
+                            <img src="../assets/coffe-bean.svg" alt="Profile" class="profile-avatar-small"/>
+
+                            <div class="profile-info">
+                                <span class="profile-name" id="sb-name">Loading...</span>
+                                <span class="profile-role" id="sb-role">...</span>
+                            </div>
+                        </div>
+                    </a>
+                </li>
 
 <!--            List 1: Dashboard -->
                 <li>
@@ -45,16 +58,23 @@
         <div class="main-content">
             <h2 class="section-title">My Profile</h2>
 
-            <div class="max-w-md mx-auto mt-8">
-                <div class="paper-card p-8 text-center">
-                    <a href="temp_upload.xhtml">
-                        <div class="leather-patch mx-auto mb-6">
-                            <img src="../assets/coffe-bean.svg" alt="Profile" id="profile-picture"
-                                onerror="this.src='../assets/coffe-bean.svg';"/>
+            <div class="mt-8 max-w-4xl mx-auto">
+                <form id="profile-form" onsubmit="saveProfile(event)">
+
+<!--                Avatar Section -->
+                    <div class="flex flex-col items-center mb-12">
+                        <div class="w-40 h-40 flex items-center justify-center rounded-full overflow-hidden relative group mb-4">
+                            <img id="profile-avatar-img" src="../assets/coffe-bean.svg" alt="Profile" class="w-24 h-24 opacity-80" />
+
+                            <div class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer" onclick="document.getElementById('photo-input').click()">
+                                <span class="text-white font-bold text-sm">Change</span>
+                            </div>
                         </div>
-                    </a>
-                    <h3 id="profile-username" class="text-2xl font-bold text-[#4e342e] mb-2">Loading...</h3>
-                    <p id="profile-role" class="text-[#8c6a48] uppercase tracking-widest font-bold text-sm mb-8">...</p>
+                        <input type="file" name="profile_photo" id="photo-input" class="hidden" accept="image/*" onchange="document.getElementById('save-btn').classList.remove('opacity-50'); document.getElementById('save-btn').disabled=false;" />
+
+                        <h2 id="display-fullname" class="text-2xl font-bold text-[#3e2723] mb-1">Loading...</h2>
+                        <p id="display-role" class="text-[#8d6e63] uppercase tracking-widest text-sm font-bold">...</p>
+                    </div>
 
 <!--                Edit Profile Section -->
                     <div>
@@ -127,70 +147,6 @@
             </form>
         </div>
     </div>
-
-    <script>
-        async function loadProfile() {
-            try {
-                const res = await fetch('../api/profile_api.php');
-                const user = await res.json();
-
-                if (user.error) {
-                    window.location.href = '../index.xhtml';
-                    return;
-                }
-
-                document.getElementById('profile-username').textContent = user.username;
-                document.getElementById('profile-role').textContent = user.role;
-                document.getElementById('profile-id').textContent = '#' + user.id_user;
-
-                // Set dynamic PFP
-                document.getElementById('profile-picture').src = '../api/get_pfp.php?id=' + encodeURIComponent(user.id_user);
-
-                const menu = document.getElementById('sidebar-menu');
-                const title = document.getElementById('sidebar-title');
-
-                let dashboardLink = '#';
-
-                if (user.role === 'corporate') {
-                    dashboardLink = 'corporate.xhtml';
-                    title.textContent = 'Brew. Corp';
-                } else if (user.role === 'manager') {
-                    dashboardLink = 'manager.xhtml';
-                    title.textContent = 'Brew. Manager';
-                } else {
-                    dashboardLink = 'staff.xhtml';
-                    title.textContent = 'Brew.';
-                }
-
-                // ---------- Build menu safely (no innerHTML) ----------
-                menu.innerHTML = ''; // clear existing items
-
-                // Dashboard
-                const li1 = document.createElement('li');
-                const a1 = document.createElement('a');
-                a1.href = dashboardLink;
-                a1.className = 'hover:text-white';
-                a1.textContent = 'Dashboard';
-                li1.appendChild(a1);
-                menu.appendChild(li1);
-
-                // Logout
-                const li2 = document.createElement('li');
-                const a2 = document.createElement('a');
-                a2.href = '../index.xhtml';
-                a2.className = 'text-red-400 hover:text-red-200';
-                a2.textContent = 'Logout';
-                li2.appendChild(a2);
-                menu.appendChild(li2);
-
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', loadProfile);
-    </script>
-
 
 </body>
 

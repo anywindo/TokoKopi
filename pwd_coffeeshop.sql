@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Nov 29, 2025 at 07:34 AM
+-- Generation Time: Dec 04, 2025 at 03:25 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -20,8 +20,10 @@ SET time_zone = "+00:00";
 --
 -- Database: `pwd_coffeeshop`
 --
-CREATE DATABASE pwd_coffeeshop;
-USE pwd_coffeeshop;
+
+CREATE DATABASE IF NOT EXISTS `pwd_coffeeshop` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `pwd_coffeeshop`;
+
 -- --------------------------------------------------------
 
 --
@@ -109,7 +111,7 @@ INSERT INTO `omzet` (`id_laporan`, `id_pelapor`, `id_branch`, `tanggal`, `omzet`
 (43, 6, 5, '2025-11-26', 3865000),
 (44, 6, 5, '2025-11-27', 4057500),
 (45, 6, 5, '2025-11-28', 4172500),
-(46, 4, 3, '2025-11-29', 8400000);
+(46, 4, 3, '2025-11-29', 8900000);
 
 -- --------------------------------------------------------
 
@@ -179,7 +181,7 @@ INSERT INTO `pemakaian` (`id_laporan`, `id_pelapor`, `id_branch`, `tanggal`, `ar
 (43, 6, 5, '2025-11-26', 3.5, 2, 0.9, 0.3, 11.2),
 (44, 6, 5, '2025-11-27', 3.9, 2.3, 0.8, 0.4, 12.1),
 (45, 6, 5, '2025-11-28', 3.6, 2.1, 0.7, 0.5, 11.6),
-(46, 4, 3, '2025-11-29', 5, 5, 5, 5, 5);
+(46, 4, 3, '2025-11-29', 5, 5.1, 5, 5, 5.4);
 
 -- --------------------------------------------------------
 
@@ -190,24 +192,25 @@ INSERT INTO `pemakaian` (`id_laporan`, `id_pelapor`, `id_branch`, `tanggal`, `ar
 CREATE TABLE `users` (
   `id_user` int(11) NOT NULL,
   `username` varchar(255) DEFAULT NULL,
+  `full_name` varchar(255) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
   `role` enum('manager','corporate') DEFAULT NULL,
   `telp` varchar(50) DEFAULT NULL,
   `id_branch` int(11) DEFAULT NULL,
-  `photo` LONGBLOB DEFAULT NULL
+  `profile_photo` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id_user`, `username`, `password`, `role`, `telp`, `id_branch`, `photo`) VALUES
-(1, 'corp_main', '$2y$10$AF4ak4hdmVE.6BKXCu3J7eoUIoX4u8.CKNxvGLn8asRcEZF9HlTCy', 'corporate', '081200000001', NULL, NULL),
-(2, 'mgr_jogja', '$2y$10$TfKNcqA22xUfzeQce6OADOepxR40ymtEygV0MDLbiGgHFw8SZBnRG', 'manager', '081300000001', 1, NULL),
-(3, 'mgr_solo', '$2y$10$DxmJP/HLkWvDcQf/MYpDIeAP4QU.hJY2acEom3K.nwNTp5ZOC9oJq', 'manager', '081300000002', 2, NULL),
-(4, 'mgr_jakarta', '$2y$10$lesfEA04StNMUFKp4pM8iuw2H11vOKxtprRbN/tyNbuVvr7/fsNd6', 'manager', '081300000003', 3, NULL),
-(5, 'mgr_bandung', '$2y$10$Z5UQo.oZnr9KfbSdrSd6/uGBEJrAXhb0DxAns8PBVTp5GZMXJu.zu', 'manager', '081300000004', 4, NULL),
-(6, 'mgr_surabaya', '$2y$10$o2AIKihmXwGhp8FKYZDwWOLI3r6YmUKVgXfDqIhqxP4cnLYcGM1.K', 'manager', '081300000005', 5, NULL);
+INSERT INTO `users` (`id_user`, `username`, `full_name`, `password`, `role`, `telp`, `id_branch`, `profile_photo`) VALUES
+(1, 'corp_main', 'Arwindo Pratama', '$2y$10$AF4ak4hdmVE.6BKXCu3J7eoUIoX4u8.CKNxvGLn8asRcEZF9HlTCy', 'corporate', '081', NULL, '218f41c138496a24468c35aaab97a752.png'),
+(2, 'mgr_jogja', NULL, '$2y$10$TfKNcqA22xUfzeQce6OADOepxR40ymtEygV0MDLbiGgHFw8SZBnRG', 'manager', '081300000001', 1, NULL),
+(3, 'mgr_solo', NULL, '$2y$10$DxmJP/HLkWvDcQf/MYpDIeAP4QU.hJY2acEom3K.nwNTp5ZOC9oJq', 'manager', '081300000002', 2, NULL),
+(4, 'mgr_jakarta', NULL, '$2y$10$lesfEA04StNMUFKp4pM8iuw2H11vOKxtprRbN/tyNbuVvr7/fsNd6', 'manager', '081300000003', 3, NULL),
+(5, 'mgr_bandung', NULL, '$2y$10$Z5UQo.oZnr9KfbSdrSd6/uGBEJrAXhb0DxAns8PBVTp5GZMXJu.zu', 'manager', '081300000004', 4, NULL),
+(6, 'mgr_surabaya', NULL, '$2y$10$o2AIKihmXwGhp8FKYZDwWOLI3r6YmUKVgXfDqIhqxP4cnLYcGM1.K', 'manager', '081300000005', 5, NULL);
 
 --
 -- Indexes for dumped tables
@@ -251,7 +254,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `branch`
 --
 ALTER TABLE `branch`
-  MODIFY `id_branch` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_branch` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `omzet`
@@ -269,7 +272,7 @@ ALTER TABLE `pemakaian`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- Constraints for dumped tables

@@ -1,24 +1,39 @@
 <?php
 include 'koneksi.php'; 
 
+header('Content-Type: application/json');
+
 // Periksa apakah metode request adalah POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-
-    $username = trim($_POST['username']);
-    $password = $_POST['password'];
+    $username = trim($_POST['username'] ?? '');
+    $password = $_POST['password'] ?? '';
 
     if (empty($username) || empty($password)) {
-        die("empty username or password.");
+        echo json_encode(['success' => false, 'message' => 'empty username or password.']);
+        exit();
     }
 
-    $stmt = $conn->prepare("SELECT role, password, id_user FROM users WHERE username=?");
+    // Admin Login
+    if ($username === 'admin' && $password === 'admin123') {
+        session_start();
+        $_SESSION['username'] = 'admin';
+        $_SESSION['role'] = 'admin';
+        $_SESSION['user_id'] = 0; // ID dummy
+        echo json_encode(['success' => true, 'redirect' => 'views/admin.xhtml']);
+        exit();
+    }
+
+    // Siapkan statement SQL untuk mengambil role user dan hash password
+    $stmt = $conn->prepare("SELECT role, password FROM users WHERE username=?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $result = $stmt->get_result();
+    
     if ($result->num_rows === 0) {
-        die("no user with this username.");
-    }else{
+        echo json_encode(['success' => false, 'message' => 'no user with this username.']);
+        exit();
+    } else {
         $row = $result->fetch_assoc();
         $actualPassword = $row['password'];
         $role = $row['role'];
@@ -31,19 +46,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         session_start();
         $_SESSION['username'] = $username;
         $_SESSION['role'] = $role;
-        $_SESSION['id_user']  = $row['id_user'];
 
         // Redirect berdasarkan role user
+        $redirect = '';
         if ($role === 'corporate') {
-            header("Location: ../views/corporate.xhtml");
+            $redirect = 'views/corporate.xhtml';
         } else if ($role === 'admin') {
-            header("Location: ../views/admin.xhtml");
+            $redirect = 'views/admin.xhtml';
         } else { 
-            header("Location: ../views/manager.xhtml");
+            $redirect = 'views/manager.xhtml';
         }
+        
+        echo json_encode(['success' => true, 'redirect' => $redirect]);
         exit();
     } else {
-        echo "invalid password.";
+        echo json_encode(['success' => false, 'message' => 'invalid password.']);
+        exit();
     }
 
     $conn->close();
