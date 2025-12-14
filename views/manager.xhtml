@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Manager Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="../js/manager.js"></script>
+    <script src="../js/manager.js?v=1"></script>
 
     <link rel="stylesheet" href="../css/style.css" />
 </head>
@@ -247,6 +247,79 @@
 
         </div>
     </div>
-</body>
 
+<!-- Edit Revenue Modal -->
+    <!-- Edit Revenue Modal -->
+    <div id="edit-revenue-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="paper-card p-6 w-full max-w-md relative">
+            <button onclick="closeEditRevenueModal()" class="absolute top-2 right-2 text-[#8c6a48] font-bold text-xl">&times;</button>
+            <h2 class="text-xl font-bold text-[#4e342e] mb-4 border-b border-[#c0a080] pb-2">Edit Revenue Report</h2>
+
+            <form onsubmit="updateRevenue(event)">
+                <input type="hidden" name="id_laporan" id="edit-rev-id" />
+                
+                <div class="mb-4">
+                    <label class="input-label block mb-1">Date</label>
+                    <input type="date" name="tanggal" id="edit-rev-date" class="paper-input border-b border-[#c0a080] w-full" required="required" />
+                </div>
+                
+                <div class="mb-6">
+                    <label class="input-label block mb-1">Gross Revenue (Rp)</label>
+                    <input type="number" name="omzet" id="edit-rev-omzet" class="paper-input border-b border-[#c0a080] w-full" required="required" />
+                </div>
+
+                <div class="flex justify-end gap-2">
+                    <button type="button" onclick="closeEditRevenueModal()" class="px-4 py-2 rounded border border-[#c0a080] text-[#8c6a48] font-bold hover:bg-[#f0e0c9]">Cancel</button>
+                    <button type="submit" class="px-4 py-2 rounded bg-[#8c6a48] text-white font-bold shadow hover:bg-[#5d4037]">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Stock Modal -->
+    <div id="edit-stock-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="paper-card p-6 w-full max-w-2xl relative">
+            <button onclick="closeEditStockModal()" class="absolute top-2 right-2 text-[#8c6a48] font-bold text-xl">&times;</button>
+            <h2 class="text-xl font-bold text-[#4e342e] mb-4 border-b border-[#c0a080] pb-2">Edit Stock Report</h2>
+
+            <form onsubmit="updateStock(event)">
+                <input type="hidden" name="id_laporan" id="edit-stock-id" />
+                
+                <div class="mb-4">
+                    <label class="input-label block mb-1">Date</label>
+                    <input type="date" name="tanggal" id="edit-stock-date" class="paper-input border-b border-[#c0a080] w-full" required="required" />
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div>
+                        <label class="input-label block mb-1">Arabica (Kg)</label>
+                        <input type="number" step="0.1" name="arabica" id="edit-stock-arabica" class="paper-input border-b border-[#c0a080] w-full" required="required" />
+                    </div>
+                    <div>
+                        <label class="input-label block mb-1">Robusta (Kg)</label>
+                        <input type="number" step="0.1" name="robusta" id="edit-stock-robusta" class="paper-input border-b border-[#c0a080] w-full" required="required" />
+                    </div>
+                    <div>
+                        <label class="input-label block mb-1">Liberica (Kg)</label>
+                        <input type="number" step="0.1" name="liberica" id="edit-stock-liberica" class="paper-input border-b border-[#c0a080] w-full" required="required" />
+                    </div>
+                    <div>
+                        <label class="input-label block mb-1">Decaf (Kg)</label>
+                        <input type="number" step="0.1" name="decaf" id="edit-stock-decaf" class="paper-input border-b border-[#c0a080] w-full" required="required" />
+                    </div>
+                    <div>
+                        <label class="input-label block mb-1">Milk (Liter)</label>
+                        <input type="number" step="0.1" name="susu" id="edit-stock-susu" class="paper-input border-b border-[#c0a080] w-full" required="required" />
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-2">
+                    <button type="button" onclick="closeEditStockModal()" class="px-4 py-2 rounded border border-[#c0a080] text-[#8c6a48] font-bold hover:bg-[#f0e0c9]">Cancel</button>
+                    <button type="submit" class="px-4 py-2 rounded bg-[#8c6a48] text-white font-bold shadow hover:bg-[#5d4037]">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</body>
 </html>

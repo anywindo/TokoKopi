@@ -48,33 +48,54 @@ function loadBranches() {
         .catch(err => console.error('Error loading branches:', err));
 }
 
+// Handle Login Form
+function handleLogin(e) {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+    
+    fetch('api/login.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = data.redirect;
+        } else {
+            alert(data.message || 'Login failed.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred during login.');
+    });
+    return false;
+}
+
 // Handle Registration Form
-document.addEventListener('DOMContentLoaded', function() {
-    const registerForm = document.getElementById('register-form');
-    if (registerForm) {
-        registerForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            
-            fetch('api/register.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Registration successful! Please login.');
-                    toggleView('login');
-                    this.reset();
-                } else {
-                    alert(data.error || 'Registration failed.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred during registration.');
-            });
-        });
-    }
-});
+function handleRegister(e) {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+    
+    fetch('api/register.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Registration successful! Please login.');
+            toggleView('login');
+            form.reset();
+        } else {
+            alert(data.error || 'Registration failed.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred during registration.');
+    });
+    return false;
+}

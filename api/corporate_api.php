@@ -38,13 +38,21 @@ switch ($action) {
     case 'add_branch':
         addBranch($conn);
         break;
-    
+
+    case 'update_branch':
+        updateBranch($conn);
+        break;
+
     case 'delete_branch':
         deleteBranch($conn);
         break;
 
-    case 'update_branch':
-        updateBranch($conn);
+    case 'update_omzet':
+        updateOmzet($conn);
+        break;
+
+    case 'update_stock':
+        updateStock($conn);
         break;
 
     default:
@@ -239,67 +247,9 @@ function addBranch($conn) {
     }
 }
 
-// DELETE BRANCH BLM JADI SU
-function deleteBranch($conn) {
-
-    if (!isset($_POST['id'])) {
-        echo json_encode(['success' => false, 'error' => 'ID tidak diterima backend']);
-        return;
-    }
-
-    $id = intval($_POST['id']);
-
-    // Cek omzet
-    $check = $conn->query("SELECT 1 FROM omzet WHERE id_branch = $id LIMIT 1");
-    if ($check->num_rows > 0) {
-        echo json_encode([
-            'success' => false,
-            'error' => 'Branch tidak bisa dihapus karena memiliki laporan omzet'
-        ]);
-        return;
-    }
-
-    // Cek pemakaian
-    $check2 = $conn->query("SELECT 1 FROM pemakaian WHERE id_branch = $id LIMIT 1");
-    if ($check2->num_rows > 0) {
-        echo json_encode([
-            'success' => false,
-            'error' => 'Branch tidak bisa dihapus karena memiliki laporan pemakaian'
-        ]);
-        return;
-    }
-
-    // Cek users
-    $check3 = $conn->query("SELECT 1 FROM users WHERE id_branch = $id LIMIT 1");
-    if ($check3->num_rows > 0) {
-        echo json_encode([
-            'success' => false,
-            'error' => 'Branch tidak bisa dihapus karena memiliki user terkait'
-        ]);
-        return;
-    }
-
-    $stmt = $conn->prepare("DELETE FROM branch WHERE id_branch = ?");
-    $stmt->bind_param("i", $id);
-
-    if ($stmt->execute()) {
-        echo json_encode(['success' => true]);
-    } else {
-        echo json_encode(['success' => false, 'error' => $conn->error]);
-    }
-}
-
-
-// EDIT BRANCH
 function updateBranch($conn) {
     $data = json_decode(file_get_contents('php://input'), true);
-
-    if (!$data || !isset($data['id']) || !isset($data['nama']) || !isset($data['alamat'])) {
-        echo json_encode(['success' => false, 'error' => 'Incomplete data']);
-        return;
-    }
-
-    $id = intval($data['id']);
+    $id = $data['id']; // corporate.js sends 'id'
     $nama = $data['nama'];
     $alamat = $data['alamat'];
 
@@ -313,7 +263,50 @@ function updateBranch($conn) {
     }
 }
 
+function deleteBranch($conn) {
+    $id = $_POST['id'];
+    $stmt = $conn->prepare("DELETE FROM branch WHERE id_branch = ?");
+    $stmt->bind_param("i", $id);
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true]);
+    } else {
+        echo json_encode(['success' => false, 'error' => $conn->error]);
+    }
+}
 
+function updateOmzet($conn) {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $id = $data['id']; // corporate.js sends 'id'
+    $omzet = $data['omzet'];
+
+    $stmt = $conn->prepare("UPDATE omzet SET omzet = ? WHERE id_laporan = ?");
+    $stmt->bind_param("di", $omzet, $id);
+
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true]);
+    } else {
+        echo json_encode(['success' => false, 'error' => $conn->error]);
+    }
+}
+
+function updateStock($conn) {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $id = $data['id']; // corporate.js sends 'id'
+    $arabica = $data['arabica'];
+    $robusta = $data['robusta'];
+    $liberica = $data['liberica'];
+    $decaf = $data['decaf'];
+    $susu = $data['susu'];
+
+    $stmt = $conn->prepare("UPDATE pemakaian SET arabica = ?, robusta = ?, liberica = ?, decaf = ?, susu = ? WHERE id_laporan = ?");
+    $stmt->bind_param("dddddi", $arabica, $robusta, $liberica, $decaf, $susu, $id);
+
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true]);
+    } else {
+        echo json_encode(['success' => false, 'error' => $conn->error]);
+    }
+}
 
 $conn->close();
 ?>
